@@ -41,20 +41,25 @@ AI PR Reviewer is an intelligent, full-stack application that automates code rev
 
 ## 📸 Screenshots
 
-*   **Home Page / Full App View**  
-    ![Home Page](placeholder-home.png)
+*   **Home Page / Full App View**
+      
+    <img width="1917" height="867" alt="Screenshot 2026-06-17 005330" src="https://github.com/user-attachments/assets/6dfa2553-7062-4edc-a969-cdc0512a4cb8" />
 
-*   **Team Analytical Dashboard**  
-    ![Analytics Dashboard](placeholder-analytics.png)
+*   **Team Analytical Dashboard**
 
-    **AI Review**  
-    ![AI Review](placeholder-automations.png)
+    <img width="1593" height="862" alt="Screenshot 2026-06-17 005428" src="https://github.com/user-attachments/assets/98068765-5512-4bc1-9ac3-8077178f16ce" />
+    
+*   **AI Review**
+   
+    <img width="1507" height="747" alt="Screenshot 2026-06-17 014900" src="https://github.com/user-attachments/assets/b9c66ebf-4f99-4021-9548-e88caa162384" />
 
-*   **Automations Dashboard**  
-    ![Automations Dashboard](placeholder-automations.png)
+*   **Automations Dashboard**
+    
+    <img width="1588" height="851" alt="Screenshot 2026-06-17 005446" src="https://github.com/user-attachments/assets/7c7009d1-cb6a-4dad-8083-5267c5bcdb0d" />
 
-*   **GitHub OAuth Login**  
-    ![GitHub Login](placeholder-login.png)
+*   **GitHub OAuth Login**
+  
+    <img width="558" height="286" alt="Screenshot 2026-06-17 014613" src="https://github.com/user-attachments/assets/df68b9b2-00d6-4d9f-9b68-88dad946f440" />
 
 ---
 
