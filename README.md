@@ -1,358 +1,144 @@
-# 🤖 AI PR Reviewer
+# 🤖 AI PR Reviewer - Comprehensive Documentation
 
-An AI-powered GitHub Pull Request Reviewer that analyzes code changes from a GitHub Pull Request and provides intelligent feedback using Gemini AI.
-
-This project automatically fetches Pull Request details, extracts changed code, and generates AI-based code review suggestions including:
-
-- 🐞 Bug Detection
-- 🔒 Security Issue Detection
-- ⚠️ Edge Case Identification
-- ⚡ Optimization Suggestions
-- 🧹 Code Quality Improvements
-
-Built as an internship/portfolio project to demonstrate practical implementation of:
-
-**FastAPI + Streamlit + GitHub API + Gemini AI + Prompt Engineering**
+AI PR Reviewer is an intelligent, full-stack application that automates code reviews using advanced Large Language Models via the Groq API. It fetches GitHub Pull Requests, analyzes code diffs file-by-file for bugs, security vulnerabilities, and code quality issues, and provides actionable suggestions.
 
 ---
 
-## 🚀 Features
+## ✨ Comprehensive Feature List (Small to Big)
 
-✅ Analyze GitHub Pull Requests using a PR URL
+### 📄 Reporting & Exporting
+*   **Markdown File & PDF Report Generation**: Automatically exports the complete AI review into downloadable Markdown files and beautifully formatted PDF reports, allowing teams to keep offline records of code quality audits and share them easily.
 
-✅ Fetch Pull Request metadata
+### 🧠 Core AI & Review Engine
+*   **Detailed File-by-File Review**: Processes each file's diff individually rather than merging them, ensuring context is accurately maintained, hallucination is minimized, and feedback is highly targeted.
+*   **Groq API Integration**: Leverages ultra-fast LPU inference (LLaMA 3.3 70B) for generating reviews in seconds.
+*   **Structured Issue Categorization**: AI categorizes findings into strictly defined buckets: Bugs, Security Issues, Edge Cases, Optimizations, and Code Quality Improvements.
+*   **Quality Scoring Algorithm**: Calculates a deterministic `PR Score` (0-100) by analyzing the severity of found issues (Critical: -20, High: -10, Medium: -5, Low: -1).
+*   **Direct Fix Suggestions**: AI provides actionable code snippets and suggestions (`💡 Fix: ...`) for developers to quickly resolve issues.
 
-✅ Retrieve changed files and code diffs
+### 🔐 Authentication & Security
+*   **GitHub OAuth Integration**: Complete OAuth2 flow replacing the need for manual Personal Access Tokens (PATs).
+*   **Symmetric Token Encryption**: GitHub tokens are encrypted before being stored in the PostgreSQL database, ensuring user credentials are safe in the event of a breach.
+*   **JWT App Sessions**: Authenticated users receive a JWT token for secure communication between the React frontend and FastAPI backend.
 
-✅ AI-powered code review using Gemini AI
+### 🤖 GitHub Integration
+*   **Contextual Markdown Comments**: Formats the AI's review into a highly readable GitHub comment featuring emojis, collapsible sections, and severity badges (`🔴 Critical`, `🟡 Medium`).
+*   **Direct API Posting**: Automatically posts the review comment to the user's Pull Request via `PyGithub`.
+*   **PR Metadata Extraction & Display**: Extracts pull request details seamlessly from standard GitHub URLs. The application also provides rich visibility by displaying the **Last Commit hash, number of Changed Files, current PR State (Open/Closed), and the Author's Name** directly in the UI.
 
-✅ Detect:
-- Bugs
-- Security Issues
-- Missing Edge Cases
-- Optimization Opportunities
-- Code Quality Improvements
+### ⚡ Automation & Webhooks
+*   **Zero-Click Reviews**: A dedicated `/webhook/{user_id}` endpoint listens for `pull_request` events from GitHub.
+*   **Asynchronous Background Tasks**: Webhook events trigger FastAPI `BackgroundTasks`, immediately returning a 202 status to GitHub to prevent timeouts during LLM processing.
+*   **HMAC SHA-256 Verification**: Cryptographically verifies webhook payloads to ensure they genuinely originated from GitHub.
 
-✅ Interactive frontend using Streamlit
-
-✅ Modular backend architecture using FastAPI
-
----
-
-## 🛠️ Tech Stack
-
-### Backend
-- **Python**
-- **FastAPI**
-- **Uvicorn**
-
-### Frontend
-- **Streamlit**
-
-### APIs & AI
-- **GitHub REST API**
-- **Google Gemini API**
-
-### Libraries Used
-- `requests`
-- `python-dotenv`
-- `google-genai`
-- `urllib`
+### 🎨 Frontend UI & User Experience
+*   **Responsive Sidebar Navigation**: A sleek sidebar that adapts to desktop, collapses to icons on tablets, and hides in a hamburger drawer on mobile.
+*   **Dynamic Theming**: First-class support for Light and Dark modes, complete with ambient background glow blobs.
+*   **Review History Panel**: A slide-out drawer that stores and allows users to revisit past PR reviews from local storage.
+*   **Analytics Dashboard**: Visualizes the repository's health over time by pulling data from the `/analytics` backend endpoint.
 
 ---
 
-## 🏗️ Project Architecture
+## 📸 Screenshots
 
-```text
-User Enters PR URL
-          ↓
-Frontend (Streamlit UI)
-          ↓
-FastAPI Backend
-          ↓
-PR URL Parser
-          ↓
-GitHub API Service
-          ↓
-Extract Code Diff
-          ↓
-Gemini AI Review
-          ↓
-JSON Response
-          ↓
-Frontend Displays Review
-```
+*   **Home Page / Full App View**  
+    ![Home Page](placeholder-home.png)
+
+*   **Team Analytical Dashboard**  
+    ![Analytics Dashboard](placeholder-analytics.png)
+
+    **AI Review**  
+    ![AI Review](placeholder-automations.png)
+
+*   **Automations Dashboard**  
+    ![Automations Dashboard](placeholder-automations.png)
+
+*   **GitHub OAuth Login**  
+    ![GitHub Login](placeholder-login.png)
 
 ---
 
-## 📂 Project Structure
+## 📂 File-by-File Codebase Review
 
-```text
-AI_PR_Reviewer/
-│
-├── backend/
-│   ├── app/
-│   │   ├── services/
-│   │   │   ├── ai_review_service.py
-│   │   │   ├── github_service.py
-│   │   │   └── pr_parser.py
-│   │   │
-│   │   └── main.py
-│   │
-│   └── .env
-│
-├── frontend/
-│   └── app.py
-│
-├── requirements.txt
-├── .gitignore
-└── README.md
-```
+### Backend (Python / FastAPI)
+*   **`backend/app/main.py`**: The orchestrator. Defines all API routes (`/auth/github`, `/ai-review`, `/post-review`, `/webhook`, `/analytics`). It handles CORS, routes background webhook tasks, and formats the final Markdown comment for GitHub.
+*   **`backend/app/auth.py`**: Security module. Contains functions for symmetric encryption/decryption of GitHub tokens, JWT generation, and a FastAPI dependency to protect routes.
+*   **`backend/app/database.py`**: SQLAlchemy configuration. Sets up the PostgreSQL engine and provides a session generator for dependency injection.
+*   **`backend/app/models.py`**: Defines the database schema. Contains the `User` model and the `ReviewHistory` model.
+*   **`backend/app/services/pr_parser.py`**: Utility for parsing raw GitHub URLs to extract the owner, repo, and pull number.
+*   **`backend/app/services/github_service.py`**: Abstraction layer for `PyGithub`. Handles fetching diffs and posting comments.
+*   **`backend/app/services/ai_review_service.py`**: The AI core. Constructs prompts for the Groq API and handles the inference cycle.
+
+### Frontend (React / Vite)
+*   **`frontend/src/App.jsx`**: The root layout component. Manages global state (tokens, UI state). Handles OAuth redirect logic and renders main layout.
+*   **`frontend/src/index.css`**: Global stylesheet containing Tailwind directives.
+*   **`frontend/src/hooks/useTheme.js` & `useReviewHistory.js`**: Custom hooks for managing Dark/Light modes and persisting review history locally.
+*   **`frontend/src/components/layout/Sidebar.jsx`**: Contains navigation logic, Avatar display, OAuth login/logout, and theme toggles.
+*   **`frontend/src/components/ui/HistoryPanel.jsx`**: Slide-out UI for past review records.
+*   **`frontend/src/pages/ReviewPage.jsx`**: Core view where users submit PR URLs and read structured reviews.
+*   **`frontend/src/pages/DashboardPage.jsx` & `AutomationsPage.jsx`**: Dashboard displaying historical analytics metrics and instructions for webhook setups.
 
 ---
 
-## ⚙️ How It Works
+## 🚀 Setup & Installation
 
-### 1. User enters a GitHub Pull Request URL
+### Prerequisites
+*   Node.js (v18+) & Python (v3.10+)
+*   PostgreSQL
+*   Groq API Key
+*   GitHub OAuth App Credentials
 
-Example:
-
-```text
-https://github.com/facebook/react/pull/36487
-```
-
-### 2. PR URL Parsing
-
-The system extracts:
-
-- Repository Owner
-- Repository Name
-- Pull Request Number
-
-Example:
-
-```json
-{
-  "owner": "facebook",
-  "repo": "react",
-  "pull_number": 36487
-}
-```
-
-### 3. GitHub API Fetching
-
-The application fetches:
-
-- PR title
-- Author
-- State
-- Changed files
-- Code diffs (patches)
-
-### 4. AI Review Generation
-
-The extracted code diff is sent to **Gemini AI**, which reviews the code and returns feedback in structured JSON format.
-
-Example:
-
-```json
-{
-  "bugs": [
-    "Potential null handling issue"
-  ],
-  "security_issues": [],
-  "edge_cases": [
-    "Empty input handling missing"
-  ],
-  "optimizations": [],
-  "code_quality_improvements": []
-}
-```
+### Local Development
+1. **Backend**:
+    ```bash
+    cd backend
+    python -m venv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
+    ```
+2. **Frontend**:
+    ```bash
+    cd frontend
+    npm install
+    ```
+3. **Run**: Use `uvicorn app.main:app --reload` for the backend and `npm run dev` for the frontend.
 
 ---
 
-## 🔑 Environment Variables Setup
+## ⚙️ Environment Variables
 
-Create a `.env` file inside the `backend` folder.
+To run this application locally, you will need to set up environment variables for both the backend and frontend.
 
-Example:
+### Backend Variables (`backend/.env`)
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | Your PostgreSQL connection string (e.g., `postgresql://user:password@localhost/dbname`). |
+| `GROQ_API_KEY` | Your API key from Groq to enable the LLaMA inference engine. |
+| `GITHUB_CLIENT_ID` | The Client ID provided by your GitHub OAuth Application. |
+| `GITHUB_CLIENT_SECRET` | The Client Secret provided by your GitHub OAuth Application. |
+| `JWT_SECRET_KEY` | A random secure string used to sign JSON Web Tokens for user sessions. |
 
-```env
-GEMINI_API_KEY=your_api_key_here
-```
-
-Get your Gemini API key from:
-
-https://aistudio.google.com/
-
----
-
-## 💻 Installation & Setup
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/Lalita0008/AI_PR_Reviewer.git
-```
-
-### 2. Move into Project Folder
-
-```bash
-cd AI_PR_Reviewer
-```
-
-### 3. Create Virtual Environment
-
-```bash
-python -m venv venv
-```
-
-### 4. Activate Virtual Environment
-
-#### Windows
-
-```bash
-venv\Scripts\activate
-```
-
-#### Mac/Linux
-
-```bash
-source venv/bin/activate
-```
-
-### 5. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
+### Frontend Variables (`frontend/.env`)
+| Variable | Description |
+|----------|-------------|
+| `VITE_GITHUB_CLIENT_ID` | The same Client ID from your GitHub OAuth App, exposed to Vite to initiate the login redirect. |
 
 ---
 
-## ▶️ Run the Backend Server
+## 📌 Other Information
 
-Run FastAPI server:
-
-```bash
-uvicorn backend.app.main:app --reload
-```
-
-Backend runs on:
-
-```text
-http://127.0.0.1:8000
-```
+*   **Contributing**: We welcome pull requests! Please ensure you test locally before submitting changes.
+*   **Security Notes**: Never commit your `.env` files to version control. The repository includes a `.gitignore` to prevent accidental leaks.
+*   **Limitations**: Extremely large PRs (over 100+ changed files) may hit GitHub API rate limits or Groq context windows. It is recommended to keep PRs small and focused.
+*   **License**: Distributed under the MIT License.
 
 ---
 
-## ▶️ Run the Frontend
+## 👤 Author
 
-Open a new terminal and run:
-
-```bash
-streamlit run frontend/app.py
-```
-
-Frontend runs on:
-
-```text
-http://localhost:8501
-```
+**Niraj Jhapte**
+- GitHub: [@ jhapate0704](https://github.com/jhapate0704)
+- Copyright © 2026 [Niraj Jhapate](https://github.com/jhapate0704). All rights reserved.
 
 ---
-
-## 📌 API Endpoints
-
-### Home Endpoint
-
-```http
-GET /
-```
-
-Returns backend status.
-
----
-
-### Parse PR URL
-
-```http
-GET /parse-pr
-```
-
-Example:
-
-```text
-/parse-pr?pr_url=<github_pr_url>
-```
-
----
-
-### Fetch PR Details
-
-```http
-GET /pr-details
-```
-
-Returns:
-
-- Title
-- Author
-- State
-- Changed Files Count
-
----
-
-### Fetch PR Files
-
-```http
-GET /pr-files
-```
-
-Returns changed files and patches.
-
----
-
-### AI Review Endpoint
-
-```http
-GET /ai-review
-```
-
-Returns AI-generated code review.
-
----
-
-
-
-## 🔮 Future Improvements
-
-- Add support for private repositories
-- Real GitHub PR commenting integration
-- Better UI for displaying review categories
-- Severity scoring for issues
-- More accurate AI code analysis
-
----
-
-## 👩‍💻 Learning Outcomes
-
-This project helped in learning:
-
-- REST APIs
-- FastAPI Development
-- Streamlit UI Development
-- API Integration
-- GitHub API
-- Prompt Engineering
-- Gemini AI Integration
-- Environment Variables Handling
-- Modular Project Structure
-
----
-
-## 👩‍💻 Author
-
-**Lalita Jhapate**
-
-AI & Machine Learning Student
 

@@ -1,0 +1,82 @@
+/**
+ * SearchBar — PR URL input + action buttons.
+ *
+ * Props:
+ *   prUrl        {string}
+ *   onUrlChange  {Function}
+ *   onReview     {Function}
+ *   onPost       {Function}
+ *   loading      {boolean}
+ *   posting      {boolean}
+ *   hasReviews   {boolean}
+ *   token        {string}
+ */
+export default function SearchBar({
+  prUrl,
+  onUrlChange,
+  onReview,
+  onPost,
+  loading,
+  posting,
+  hasReviews,
+  token,
+  onCancel,
+}) {
+  const handleKey = (e) => { if (e.key === 'Enter') onReview() }
+  const busy = loading || posting
+
+  return (
+    <div className="mx-auto w-full max-w-3xl rounded-2xl border border-gray-200 bg-white p-6 shadow-xl shadow-gray-200/60 dark:border-white/10 dark:bg-white/5 dark:shadow-black/30">
+      {/* URL row */}
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <input
+          id="pr-url-input"
+          type="url"
+          value={prUrl}
+          onChange={(e) => onUrlChange(e.target.value)}
+          onKeyDown={handleKey}
+          placeholder="https://github.com/owner/repo/pull/123"
+          className="h-12 flex-1 rounded-xl border border-gray-300 bg-gray-50 px-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-white/10 dark:bg-gray-800/60 dark:text-white dark:placeholder:text-gray-500"
+        />
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <button
+            id="review-btn"
+            onClick={onReview}
+            disabled={busy}
+            className="h-12 w-full sm:w-auto cursor-pointer rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-violet-500/40 disabled:cursor-not-allowed disabled:opacity-50 disabled:transform-none"
+          >
+            {loading ? '⏳ Reviewing…' : '🔍 Review PR'}
+          </button>
+          
+          {loading && onCancel && (
+            <button
+              onClick={onCancel}
+              className="h-12 w-full sm:w-auto cursor-pointer rounded-xl bg-red-100 px-6 text-sm font-semibold text-red-600 shadow-md transition-all duration-200 hover:bg-red-200 dark:bg-red-500/15 dark:text-red-400 dark:hover:bg-red-500/30"
+            >
+              🛑 Cancel
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Post button row */}
+      <div className="mt-4 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+        <button
+          id="post-review-btn"
+          onClick={onPost}
+          disabled={busy || !hasReviews}
+          title={!token ? 'Add a GitHub token to enable posting' : !hasReviews ? 'Run a review first' : ''}
+          className="h-10 w-full cursor-pointer rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 px-5 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-cyan-500/35 disabled:cursor-not-allowed disabled:opacity-40 disabled:transform-none sm:w-auto"
+        >
+          {posting ? '⏳ Posting…' : '📤 Post Review to GitHub'}
+        </button>
+
+        {!token && (
+          <span className="text-xs text-amber-600 dark:text-amber-400/80">
+            ⚠️ Add a GitHub token to enable posting
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}

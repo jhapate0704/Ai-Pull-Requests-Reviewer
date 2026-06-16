@@ -1,5 +1,59 @@
+# ── Python ────────────────────────────────────────────────────
 venv/
 __pycache__/
-.env
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
 .pytest_cache/
-*.pyc
+htmlcov/
+.coverage
+.tox/
+
+# ── Node.js / Frontend ────────────────────────────────────────
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+.pnpm-debug.log
+dist/
+out/
+.vite/
+.eslintcache
+
+# ── Environment / Secrets ─────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+secrets.json
+
+# ── Databases ─────────────────────────────────────────────────
+*.sqlite3
+*.db
+*.db-journal
+
+# ── Generated Reports / Exports ───────────────────────────────
+*.pdf
+
+# ── IDE / Editor ──────────────────────────────────────────────
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.suo
+*.sw?
+.DS_Store
+Thumbs.db
+
+# ── Logs ──────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── OS ────────────────────────────────────────────────────────
+.DS_Store
+desktop.ini
