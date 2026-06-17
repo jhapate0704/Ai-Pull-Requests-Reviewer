@@ -4,6 +4,12 @@ AI PR Reviewer is an intelligent, full-stack application that automates code rev
 
 ---
 
+
+# 👉 Do In Free Using This, AI-Powered Pull Request Reviews and Automated Comments — Completely Free
+
+ Unlike many other tools that charge $24/month or more for automated PR reviews and comments, this tool provides the same core functionality completely free of cost.
+ Simply connect your GitHub , and the AI will analyze pull requests and you want to generate meaningful review comments on pr it do automatically.
+ No expensive subscriptions, no hidden charges — just connect your repository and start reviewing PRs with AI assistance.
 ## ✨ Comprehensive Feature List (Small to Big)
 
 ### 📄 Reporting & Exporting
