@@ -1,3 +1,24 @@
+/**
+ * File: App.jsx
+ *
+ * Purpose:
+ * Root application component. Serves as the main shell, handling global states
+ * like session tokens, navigation tabs, user info, drawer visibility, and themes.
+ *
+ * Responsibilities:
+ * - Handle GitHub OAuth token exchange callback from URL search parameters.
+ * - Synchronize theme and session settings to local storage.
+ * - Manage sidebar layout navigation and slide-out history panel triggers.
+ * - Render views based on selected page keys ('review' | 'dashboard' | 'automations').
+ *
+ * Dependencies:
+ * - React (useState, useEffect)
+ * - Hooks (useTheme, useReviewHistory)
+ * - Layout components (Sidebar, Footer)
+ * - UI components (HistoryPanel)
+ * - Page views (ReviewPage, DashboardPage, AutomationsPage)
+ */
+
 import { useState, useEffect } from 'react'
 import { useTheme }          from './hooks/useTheme'
 import { useReviewHistory }  from './hooks/useReviewHistory'
@@ -8,31 +29,51 @@ import ReviewPage            from './pages/ReviewPage'
 import DashboardPage         from './pages/DashboardPage'
 import AutomationsPage       from './pages/AutomationsPage'
 
-/**
- * App — root component.
- * Owns: theme, token, history panel open-state, review history.
- */
 export default function App() {
+  // Toggle utilities and styling configurations for light/dark theme layout
   const { theme, toggleTheme }                          = useTheme()
+
+  // Custom hook containing client-side persisted review summaries list
   const { history, addReview, remove, clearAll }        = useReviewHistory()
+
+  // App JWT token generated on authentication (stored in localStorage)
   const [token,         setToken]                       = useState(localStorage.getItem('app_token') || '')
+
+  // GitHub user login handle
   const [username,      setUsername]                    = useState(localStorage.getItem('github_username') || '')
+
+  // GitHub user avatar image URL
   const [avatarUrl,     setAvatarUrl]                   = useState(localStorage.getItem('github_avatar_url') || '')
+
+  // Set to true while exchanging credentials code for JWT via authentication endpoints
   const [isLoggingIn,   setIsLoggingIn]                 = useState(false)
+
+  // Controls drawer open/close visibility for review history lists
   const [historyOpen,   setHistoryOpen]                 = useState(false)
+
+  // Controls sidebar collapsible menus on small screens
   const [isMobileMenuOpen, setIsMobileMenuOpen]         = useState(false)
+
+  // Cache object containing historical review details to load into PR reviewer screen
   const [restoreEntry,  setRestoreEntry]                = useState(null)
-  const [currentPage,   setCurrentPage]                 = useState('review') // 'review' | 'dashboard' | 'automations'
+
+  // Determines current active page view ('review' | 'dashboard' | 'automations')
+  const [currentPage,   setCurrentPage]                 = useState('review')
 
   // Handle GitHub OAuth Callback
+  // Why:
+  // After redirects from GitHub OAuth, the URL search parameters contain a 'code' value.
+  // We extract it, clear the address bar, and dispatch it to our backend to exchange it for a session.
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const code = urlParams.get('code')
     if (code) {
       setIsLoggingIn(true)
-      // Remove code from URL
+      
+      // Clear URL parameter queries to restore clean URLs in address bar
       window.history.replaceState({}, document.title, window.location.pathname)
       
+      // Request JWT credentials and profile details using OAuth code
       fetch('http://localhost:8000/auth/github', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -41,6 +82,7 @@ export default function App() {
       .then(res => res.json())
       .then(data => {
         if (data.token) {
+          // Store session payload locally
           localStorage.setItem('app_token', data.token)
           localStorage.setItem('github_username', data.username)
           if (data.avatar_url) localStorage.setItem('github_avatar_url', data.avatar_url)
@@ -55,12 +97,24 @@ export default function App() {
     }
   }, [])
 
+  /**
+   * Redirects user to GitHub OAuth login page.
+   *
+   * Why:
+   * Initiates authentication sequence to link a GitHub account.
+   */
   const handleGitHubLogin = () => {
     const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID || 'YOUR_CLIENT_ID';
     const redirectUri = window.location.origin;
     window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=repo`;
   }
 
+  /**
+   * Logs the current user out.
+   *
+   * Why:
+   * Resets session state variables and deletes credentials from localStorage.
+   */
   const handleLogout = () => {
     localStorage.removeItem('app_token')
     localStorage.removeItem('github_username')
@@ -70,11 +124,20 @@ export default function App() {
     setAvatarUrl('')
   }
 
+  /**
+   * Loads a historic review from history drawers.
+   *
+   * Why:
+   * Restores a previously parsed review payload on the reviewer page.
+   *
+   * @param {object} entry - The historical review record.
+   */
   const handleLoadHistory = (entry) => {
     setRestoreEntry(entry)
     setCurrentPage('review')
   }
 
+  // Render a loading state during code exchange requests
   if (isLoggingIn) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
@@ -91,7 +154,7 @@ export default function App() {
         color:           theme === 'dark' ? '#f9fafb' : '#111827',
       }}
     >
-      {/* Ambient glow blobs */}
+      {/* Ambient decorative glow blobs */}
       <div aria-hidden="true" className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className={`absolute -left-40 -top-40 h-[600px] w-[600px] rounded-full blur-[120px] ${theme === 'dark' ? 'bg-violet-600/10' : 'bg-violet-400/8'}`} />
         <div className={`absolute -bottom-40 -right-20 h-[500px] w-[500px] rounded-full blur-[120px] ${theme === 'dark' ? 'bg-indigo-600/8' : 'bg-indigo-400/6'}`} />
@@ -112,7 +175,7 @@ export default function App() {
         </button>
       </header>
 
-      {/* Sidebar Navigation */}
+      {/* Navigation and Actions Sidebar */}
       <Sidebar
         token={token}
         username={username}
@@ -129,7 +192,7 @@ export default function App() {
         setIsMobileMenuOpen={setIsMobileMenuOpen}
       />
 
-      {/* History drawer */}
+      {/* History Drawer slide-out panel */}
       <HistoryPanel
         open={historyOpen}
         onClose={() => setHistoryOpen(false)}
@@ -139,8 +202,9 @@ export default function App() {
         onClear={clearAll}
       />
 
-      {/* Main page */}
+      {/* Route Views Switcher */}
       <main className="relative z-10 flex-1 md:ml-20 lg:ml-64 transition-all duration-300">
+        {/* Pull Request review execution view */}
         {currentPage === 'review' && (
           <ReviewPage
             token={token}
@@ -152,6 +216,7 @@ export default function App() {
           />
         )}
         
+        {/* Pull Request health dashboard statistics view */}
         {currentPage === 'dashboard' && (
           <DashboardPage 
             history={history}
@@ -159,6 +224,7 @@ export default function App() {
           />
         )}
         
+        {/* Webhook trigger configurations view */}
         {currentPage === 'automations' && (
           <AutomationsPage 
             token={token}
@@ -167,6 +233,7 @@ export default function App() {
         )}
       </main>
 
+      {/* System Footer bar */}
       <Footer />
     </div>
   )

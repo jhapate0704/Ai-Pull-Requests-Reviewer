@@ -1,10 +1,33 @@
+"""
+File: ai_review_service.py
+
+Purpose:
+Connects to Groq's LLM APIs (specifically Llama 3.3) to generate language-specific
+code reviews on file diffs, returning structured JSON feedback with severity rankings.
+
+Responsibilities:
+- Select targeted linting focus hints based on the programming language/file extension.
+- Format detailed prompt instructions specifying JSON schema outputs.
+- Query the LLM chat completion API with temperature settings optimized for analytical reviews.
+- Return structured analysis response strings to the caller.
+
+Dependencies:
+- groq
+- os
+- dotenv
+"""
+
 import os
 from dotenv import load_dotenv
 from groq import Groq
 
+# Load configuration values from environment file in the backend directory
 load_dotenv("backend/.env")
 
+# GROQ API key credential loaded from the environment
 api_key = os.getenv("GROQ_API_KEY")
+
+# Instantiate standard Groq client using the API key
 client = Groq(api_key=api_key)
 
 # -----------------------------------------------------------------------
@@ -16,6 +39,8 @@ client = Groq(api_key=api_key)
 #   index.js  → AI focuses on XSS, async race conditions, memory leaks
 #   query.sql → AI focuses on N+1 queries, missing indexes, injection
 # -----------------------------------------------------------------------
+# LANGUAGE_HINTS defines tailored areas of investigation for different languages
+# to optimize the quality and relevance of reviews.
 LANGUAGE_HINTS = {
     ".py":         "Focus on: type hints, PEP8, exception handling, SQL injection, async/await misuse.",
     ".js":         "Focus on: XSS vulnerabilities, async race conditions, memory leaks, ES6 best practices.",
@@ -31,8 +56,24 @@ LANGUAGE_HINTS = {
 }
 
 def get_language_hint(filename: str) -> str:
-    """Return a language-specific review hint based on the file extension."""
+    """
+    Returns a language-specific review hint based on the file extension.
+
+    Why:
+    Assures reviews are contextually relevant to the specific programming environment.
+
+    What happens:
+    Extracts the lowercase extension from the filename. Looks up the extension
+    in the LANGUAGE_HINTS mapping. Returns default message if the extension is not matched.
+
+    Args:
+        filename (str): The filename of the target source file under review.
+
+    Returns:
+        str: Language-aware testing focus guidelines.
+    """
     if "." in filename:
+        # Extract the extension suffix by splitting from the right-hand side
         ext = "." + filename.rsplit(".", 1)[-1].lower()
         return LANGUAGE_HINTS.get(ext, "Focus on general code quality, security, and best practices.")
     return "Focus on general code quality, security, and best practices."
@@ -66,13 +107,23 @@ def review_code_diff(filename: str, code_diff: str) -> str:
     """
     Review a SINGLE file's diff using Groq AI.
 
+    Why:
+    Delegating reviews on a per-file basis prevents prompt context exhaustion,
+    helps direct the AI's attention to file-level nuances, and structures output severity classifications.
+
+    What happens:
+    Fetches the specific language hints, formats a prompt detailing instruction requirements,
+    queries Groq LLM (llama-3.3-70b-versatile) enforcing json_object formatting constraints,
+    and returns raw response JSON content.
+
     Args:
-        filename  : Name of the file being reviewed e.g. "auth.py"
-        code_diff : The raw git patch/diff for THIS file only
+        filename (str): Name of the file being reviewed e.g. "auth.py"
+        code_diff (str): The raw git patch/diff for this file.
 
     Returns:
-        JSON string with categorised issues, each having severity + suggestion
+        str: JSON string with categorized issues matching the specified schema format.
     """
+    # Select focused guidelines for this file type
     language_hint = get_language_hint(filename)
 
     prompt = f"""
@@ -119,6 +170,8 @@ Code Diff for {filename}:
 {code_diff}
 """
 
+    # Dispatch request to Groq API.
+    # We enforce JSON mode via response_format and keep temperature low (0.2) to ensure factual consistency.
     response = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[{"role": "user", "content": prompt}],
@@ -127,4 +180,5 @@ Code Diff for {filename}:
     )
 
     return response.choices[0].message.content
+
 

@@ -1,12 +1,27 @@
 /**
- * PRDetailsBanner — displays PR metadata: author, state, file count, title.
+ * File: PRDetailsBanner.jsx
+ *
+ * Purpose:
+ * Displays Pull Request metadata such as title, author, open/closed status, and modified file counts.
+ *
+ * Responsibilities:
+ * - Render a metadata panel listing author name, changes metrics, and status badges.
+ * - Display the title of the Pull Request inside a prominent visual box.
+ * - Safely render null or fallback values if properties are missing or undefined.
  *
  * Props:
- *   details {Object} — { title, author, state, changed_files }
+ * - details (object): The pull request details payload containing keys:
+ *   - title (string): Title of the Pull Request.
+ *   - author (string): GitHub author login identifier.
+ *   - state (string): Current state of the PR (e.g. 'open' | 'closed').
+ *   - changed_files (number): Total count of files changed in the PR.
  */
+
 export default function PRDetailsBanner({ details }) {
+  // Return null if details are not loaded/populated
   if (!details) return null
 
+  // Map metadata items into structured list objects for simplified looping
   const metaItems = [
     { label: '👤 Author',        value: details.author        || 'N/A' },
     { label: '📂 Changed Files', value: details.changed_files ?? '—' },
@@ -22,7 +37,7 @@ export default function PRDetailsBanner({ details }) {
         📌 Pull Request Details
       </p>
 
-      {/* Meta grid */}
+      {/* Meta Grid Layout displaying key fields (Author, Changed Files count, State) */}
       <div className="mb-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {metaItems.map(({ label, value }) => (
           <div
@@ -37,7 +52,7 @@ export default function PRDetailsBanner({ details }) {
         ))}
       </div>
 
-      {/* Title */}
+      {/* PR Title Display Box */}
       {details.title && (
         <div className="flex items-start gap-2.5 rounded-xl border border-violet-200 bg-violet-50 px-4 py-3 dark:border-violet-500/20 dark:bg-violet-500/8">
           <span className="mt-0.5 shrink-0 text-sm">📝</span>

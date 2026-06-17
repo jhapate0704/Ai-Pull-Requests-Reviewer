@@ -1,16 +1,28 @@
 /**
- * SearchBar — PR URL input + action buttons.
+ * File: SearchBar.jsx
+ *
+ * Purpose:
+ * Renders the primary search bar where users enter GitHub PR URLs and execute/cancel code reviews or post comments.
+ *
+ * Responsibilities:
+ * - Capture URL text input and update parent state.
+ * - Call review triggers when the user hits Enter or clicks 'Review PR'.
+ * - Provide a cancellation trigger during long-running review loads.
+ * - Manage active/disabled button states if operations are running.
+ * - Inform the user via alerts/warnings if tokens are missing.
  *
  * Props:
- *   prUrl        {string}
- *   onUrlChange  {Function}
- *   onReview     {Function}
- *   onPost       {Function}
- *   loading      {boolean}
- *   posting      {boolean}
- *   hasReviews   {boolean}
- *   token        {string}
+ * - prUrl (string): The current pull request URL input text.
+ * - onUrlChange (function): Handler updating the prUrl variable.
+ * - onReview (function): Method initiating the API review fetch.
+ * - onPost (function): Method triggering the GitHub comment post.
+ * - loading (boolean): Indicator of whether review generation is running.
+ * - posting (boolean): Indicator of whether comment posting is running.
+ * - hasReviews (boolean): Boolean indicating if review data exists to be posted.
+ * - token (string): GitHub OAuth session validation token.
+ * - onCancel (function): Callback allowing users to interrupt active review loads.
  */
+
 export default function SearchBar({
   prUrl,
   onUrlChange,
@@ -22,12 +34,15 @@ export default function SearchBar({
   token,
   onCancel,
 }) {
+  // Listen for Enter key shortcut inside the URL input box
   const handleKey = (e) => { if (e.key === 'Enter') onReview() }
+  
+  // Flag indicating if any operations are currently busy
   const busy = loading || posting
 
   return (
     <div className="mx-auto w-full max-w-3xl rounded-2xl border border-gray-200 bg-white p-6 shadow-xl shadow-gray-200/60 dark:border-white/10 dark:bg-white/5 dark:shadow-black/30">
-      {/* URL row */}
+      {/* URL input field and core Review action buttons row */}
       <div className="flex flex-col gap-3 sm:flex-row">
         <input
           id="pr-url-input"
@@ -39,6 +54,7 @@ export default function SearchBar({
           className="h-12 flex-1 rounded-xl border border-gray-300 bg-gray-50 px-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-white/10 dark:bg-gray-800/60 dark:text-white dark:placeholder:text-gray-500"
         />
         <div className="flex flex-col gap-2 sm:flex-row">
+          {/* Main Review execution trigger */}
           <button
             id="review-btn"
             onClick={onReview}
@@ -48,6 +64,7 @@ export default function SearchBar({
             {loading ? '⏳ Reviewing…' : '🔍 Review PR'}
           </button>
           
+          {/* Intermittent Cancel button */}
           {loading && onCancel && (
             <button
               onClick={onCancel}
@@ -59,7 +76,7 @@ export default function SearchBar({
         </div>
       </div>
 
-      {/* Post button row */}
+      {/* GitHub Comment Posting execution row */}
       <div className="mt-4 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
         <button
           id="post-review-btn"
@@ -71,6 +88,7 @@ export default function SearchBar({
           {posting ? '⏳ Posting…' : '📤 Post Review to GitHub'}
         </button>
 
+        {/* Informative warning text showing if authentication credentials are required */}
         {!token && (
           <span className="text-xs text-amber-600 dark:text-amber-400/80">
             ⚠️ Add a GitHub token to enable posting

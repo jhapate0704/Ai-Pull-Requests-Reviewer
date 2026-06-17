@@ -1,18 +1,39 @@
+/**
+ * File: FileCard.jsx
+ *
+ * Purpose:
+ * Renders an expandable card detailing the code review findings (like bugs, security, edge cases)
+ * for a single reviewed source file.
+ *
+ * Responsibilities:
+ * - Calculate total issue counts in the file review.
+ * - Manage card open/collapsed states, defaulting to open if findings are present.
+ * - Display metadata about the file (filename, additions count, deletions count).
+ * - Render section panels mapping to review result categories (using SectionPanel).
+ *
+ * Props:
+ * - fileReview (object): Review details for a single file containing keys:
+ *   - filename (string): Name of the source file.
+ *   - additions (number): Number of line additions.
+ *   - deletions (number): Number of line deletions.
+ *   - review (object): Categorized lists of issues.
+ */
+
 import { useState } from 'react'
 import SectionPanel from './SectionPanel'
 import { REVIEW_SECTIONS } from '../../utils/constants'
 import { countTotalIssues } from '../../utils/helpers'
 
-/**
- * FileCard — expandable card for one file's AI review.
- *
- * Props:
- *   fileReview {Object} — { filename, additions, deletions, review }
- */
 export default function FileCard({ fileReview }) {
   const { filename, additions, deletions, review } = fileReview
+  
+  // Calculate aggregate number of issues found across all sections
   const totalIssues = countTotalIssues(review, REVIEW_SECTIONS)
+  
+  // Collapsible toggle state (defaults to open if issues exist to highlight details)
   const [open, setOpen] = useState(totalIssues > 0)
+  
+  // Boolean indicating whether this file has any review findings
   const hasIssues = totalIssues > 0
 
   return (
@@ -76,6 +97,7 @@ export default function FileCard({ fileReview }) {
           id={`file-body-${filename}`}
           className="grid grid-cols-1 gap-3 border-t border-gray-200 p-5 dark:border-white/8 sm:grid-cols-2 xl:grid-cols-3"
         >
+          {/* Loop through all review categories and render a SectionPanel for each */}
           {REVIEW_SECTIONS.map((section) => (
             <SectionPanel
               key={section.key}

@@ -1,3 +1,20 @@
+/*
+File: index.css
+
+Purpose:
+Global stylesheets, design system values, fonts, and animation properties.
+
+Responsibilities:
+- Import external Google fonts (Inter, JetBrains Mono)
+- Configure custom design system color values (brand theme and surface colors)
+- Configure alert severity coloring (critical, high, medium, low)
+- Set up global animation keyframes and transitions (fadeIn, slideUp)
+- Define custom scrollbar and html/body typography details
+
+Dependencies:
+- tailwindcss (imported framework)
+*/
+
 /* Google Fonts — must be first @import (before @import "tailwindcss") */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 

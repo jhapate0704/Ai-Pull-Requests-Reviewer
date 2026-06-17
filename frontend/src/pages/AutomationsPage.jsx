@@ -1,13 +1,36 @@
+/**
+ * File: AutomationsPage.jsx
+ *
+ * Purpose:
+ * Renders the webhook and automation configuration page, providing integration guide details.
+ *
+ * Responsibilities:
+ * - Render warnings if GitHub OAuth registration tokens are missing.
+ * - Supply copy-to-clipboard functionality for webhook URL and secret.
+ * - Display step-by-step documentation guiding users to set up webhooks in GitHub settings.
+ *
+ * Props:
+ * - token (string): Session validation token.
+ * - onLogin (function): Callback redirecting to GitHub OAuth login page.
+ */
+
 import { useState } from 'react'
 
 export default function AutomationsPage({ token, onLogin }) {
+  // Clipboard copy indicators
   const [copiedUrl, setCopiedUrl] = useState(false)
   const [copiedSecret, setCopiedSecret] = useState(false)
 
-  // In a real app, this would be fetched from the backend for the logged-in user
+  // Webhook configurations details (Note: static placeholders for demo purposes)
   const webhookUrl = 'https://your-api.com/webhook/user_12345'
   const webhookSecret = 'sk_web_987654321'
 
+  /**
+   * Helper that copies text to user's clipboard buffer.
+   *
+   * @param {string} text - Target string content to copy.
+   * @param {function} setCopied - React setter to trigger checkmark indicator.
+   */
   const copyToClipboard = (text, setCopied) => {
     navigator.clipboard.writeText(text)
     setCopied(true)
@@ -16,6 +39,7 @@ export default function AutomationsPage({ token, onLogin }) {
 
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6">
+      {/* Title Header */}
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
           ⚡ Automations
@@ -34,7 +58,7 @@ export default function AutomationsPage({ token, onLogin }) {
         </div>
 
         <div className="px-6 py-6 sm:px-8">
-          {/* Missing Token Warning */}
+          {/* Missing Token Warning alerts user to authenticate prior to webhook setups */}
           {!token && (
             <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-500/30 dark:bg-amber-500/10">
               <div className="flex">
@@ -55,7 +79,7 @@ export default function AutomationsPage({ token, onLogin }) {
             </div>
           )}
 
-          {/* Credentials */}
+          {/* Webhook Url and Secret inputs block */}
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Payload URL</label>
@@ -96,7 +120,7 @@ export default function AutomationsPage({ token, onLogin }) {
 
           <hr className="my-8 border-gray-200 dark:border-white/10" />
 
-          {/* Setup Guide */}
+          {/* GitHub webhooks setup instruction guide list */}
           <div>
             <h3 className="text-lg font-bold text-gray-900 dark:text-white">Step-by-Step Guide</h3>
             <ol className="mt-4 list-decimal space-y-4 pl-5 text-sm text-gray-600 dark:text-gray-400">

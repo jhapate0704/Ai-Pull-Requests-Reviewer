@@ -1,15 +1,55 @@
+/**
+ * File: DashboardPage.jsx
+ *
+ * Purpose:
+ * Renders the Team Analytics Dashboard view, listing historical PR review totals, average quality scores,
+ * and recent audit logs saved inside the PostgreSQL database for a specific GitHub repository.
+ *
+ * Responsibilities:
+ * - Handle user input queries for repositories in 'owner/repo' format.
+ * - Call prService API actions to fetch backend statistics.
+ * - Display loading indicators (using Spinner) and validation error notifications (using Alert).
+ * - Render statistics summary panels and list historic review entries with score indicators.
+ *
+ * Props:
+ * - onLoadReview (function): Hook to load historical review logs.
+ *
+ * Dependencies:
+ * - React (useState, useEffect)
+ * - Services (prService)
+ * - UI Components (Spinner, Alert)
+ */
+
 import { useState, useEffect } from 'react'
 import { fetchTeamAnalytics } from '../services/prService'
 import Spinner from '../components/ui/Spinner'
 import Alert from '../components/ui/Alert'
 
 export default function DashboardPage({ onLoadReview }) {
+  // Input search query for repository (defaults to 'facebook/react')
   const [repoInput, setRepoInput] = useState('facebook/react')
+
+  // Loaded analytics details containing counts, averages, and histories
   const [analytics, setAnalytics] = useState(null)
+
+  // Flag indicating API loading status
   const [loading, setLoading] = useState(false)
+
+  // API validation error warning message
   const [error, setError] = useState('')
 
+  /**
+   * Fetches analytical data for the entered repository from the backend database.
+   *
+   * Why:
+   * Displays aggregated quality statistics and run history records for code auditing.
+   *
+   * What happens:
+   * Splits input into owner and repo name, queries backend REST API services,
+   * sets the local analytics payload state, and handles API error statuses.
+   */
   const loadAnalytics = async () => {
+    // Validate format syntax for search queries
     if (!repoInput.includes('/')) {
       setError('Please enter a valid format: owner/repo')
       return
@@ -27,23 +67,19 @@ export default function DashboardPage({ onLoadReview }) {
     }
   }
 
-  // Load default on mount
+  // Load default on mount (unused by default, template support placeholder)
   useEffect(() => {
     // loadAnalytics() // optionally auto-load
   }, [])
 
-  // Basic stats from the backend
+  // Basic stats derived from the loaded analytics payload
   const totalReviews = analytics?.total_reviews || 0
   const avgScore = analytics?.average_score || null
   const history = analytics?.history || []
-
-  // Count issues by severity across team history (if backend provided full reviews_json)
-  // For now, the backend /analytics endpoint returns basic history.
-  // We will estimate or skip the granular critical counts if not provided by backend,
-  // but let's assume we display what we have.
   
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
+      {/* Page Title & Repo Input Bar */}
       <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
@@ -54,7 +90,7 @@ export default function DashboardPage({ onLoadReview }) {
           </p>
         </div>
         
-        {/* Repo Search */}
+        {/* Repository query search panel */}
         <div className="flex w-full max-w-xs items-center gap-2">
           <input 
             type="text" 
@@ -76,9 +112,10 @@ export default function DashboardPage({ onLoadReview }) {
       {error && <Alert type="error" message={error} className="mb-6" />}
       {loading && <Spinner label="Loading team analytics..." />}
 
+      {/* Renders Dashboard statistics if analytics payload is loaded */}
       {!loading && analytics && (
         <>
-          {/* Top Stats Row */}
+          {/* Top Stats Cards Summary Row */}
           <div className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
             <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-gray-800/40">
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Team Reviews</p>
@@ -101,7 +138,7 @@ export default function DashboardPage({ onLoadReview }) {
             </div>
           </div>
 
-          {/* Recent Reviews List */}
+          {/* Recent Reviews historical audit list */}
           <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">Organization Review History</h2>
           <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-800/40">
             {history.length === 0 ? (
@@ -130,7 +167,6 @@ export default function DashboardPage({ onLoadReview }) {
                       ) : (
                         <span className="text-sm text-gray-400">No score</span>
                       )}
-                      {/* For team analytics, clicking view could load the PR directly or just act as a link for now */}
                       <a 
                         href={entry.pr_url} target="_blank" rel="noreferrer"
                         className="rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
@@ -146,6 +182,7 @@ export default function DashboardPage({ onLoadReview }) {
         </>
       )}
       
+      {/* Empty Search State placeholder */}
       {!loading && !analytics && (
         <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white p-12 text-center shadow-sm dark:border-white/10 dark:bg-gray-800/40">
           <p className="text-gray-500 dark:text-gray-400">Search for a repository (e.g. facebook/react) to load team analytics from the backend database.</p>
@@ -154,5 +191,3 @@ export default function DashboardPage({ onLoadReview }) {
     </div>
   )
 }
-
-

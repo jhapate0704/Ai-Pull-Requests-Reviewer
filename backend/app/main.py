@@ -1,3 +1,28 @@
+"""
+File: main.py
+
+Purpose:
+Main entry point and router for the FastAPI backend application of the AI PR Reviewer.
+
+Responsibilities:
+- Initialize the FastAPI app instance, title, description, and CORS policies.
+- Define HTTP endpoints for user authentication (GitHub OAuth), retrieving PR info, and initiating AI reviews.
+- Handle webhook notifications from GitHub to trigger background PR reviews.
+- Serve repository analytics reports by querying historical review analytics.
+- Create database tables at startup.
+
+Dependencies:
+- fastapi
+- sqlalchemy
+- pydantic
+- hmac
+- hashlib
+- backend.app.services (pr_parser, github_service, ai_review_service)
+- backend.app.auth
+- backend.app.database
+- backend.app.models
+"""
+
 import json
 import os
 import requests
@@ -18,9 +43,10 @@ from backend.app.database import engine, get_db
 import backend.app.models as models
 from backend.app.auth import encrypt_token, decrypt_token, create_jwt_token, get_current_user
 
-# Create database tables
+# Create database tables automatically based on the SQLAlchemy metadata definitions
 models.Base.metadata.create_all(bind=engine)
 
+# Instantiate FastAPI application instance
 app = FastAPI(
     title="AI PR Reviewer",
     description="AI-powered GitHub Pull Request Reviewer",
@@ -28,6 +54,9 @@ app = FastAPI(
 )
 
 # Add CORS middleware to allow requests from the React frontend
+# Why:
+# The frontend and backend run on different ports/domains.
+# Allowing origins is necessary to avoid blocking cross-origin browser requests.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # In production, specify the exact frontend domain
@@ -37,6 +66,12 @@ app.add_middleware(
 )
 
 class PostReviewRequest(BaseModel):
+    """
+    Pydantic model representing incoming request body to review and post comments to GitHub.
+
+    Fields:
+        pr_url (str): The full GitHub URL of the target Pull Request.
+    """
     pr_url: str
 
 
@@ -56,7 +91,24 @@ class PostReviewRequest(BaseModel):
 #   🟢 LOW — Variable name x → Rename to userId
 # -----------------------------------------------------------------------
 def calculate_pr_score(file_reviews: list) -> int:
+    """
+    Calculates the aggregate code quality score of a Pull Request based on finding severities.
+
+    Why:
+    Provides users with a simple, high-level summary score representing the code quality of the PR.
+
+    What happens:
+    Starts with a maximum score of 100. Subtracts penalty points for each issue found
+    across all files. Clamps the final value between 0 and 100.
+
+    Args:
+        file_reviews (list): List of dictionaries containing review categories and issue severities.
+
+    Returns:
+        int: Aggregate score from 0 to 100.
+    """
     score = 100
+    # Penalty weights associated with different severity labels
     penalties = {
         "CRITICAL": 20,
         "HIGH": 10,
@@ -64,6 +116,7 @@ def calculate_pr_score(file_reviews: list) -> int:
         "LOW": 1
     }
     
+    # Traverse through all categorized review issues and deduct score
     for fr in file_reviews:
         review = fr.get("review", {})
         for category, items in review.items():
@@ -75,8 +128,24 @@ def calculate_pr_score(file_reviews: list) -> int:
     return max(0, min(100, score))
 
 def format_review_as_comment(file_reviews: list, score: int = None) -> str:
-    """Convert per-file AI reviews into a formatted GitHub markdown comment."""
+    """
+    Converts per-file AI reviews into a formatted GitHub markdown comment.
 
+    Why:
+    Prepares a clean, readable, formatted markdown report that can be posted as a comment on the GitHub PR.
+
+    What happens:
+    Iterates over each file's reviews, groups issues by category (Bugs, Security, Edge Cases, etc.),
+    adds severity emojis, formats suggested fixes in markdown blockquotes, and compiles everything into a single string.
+
+    Args:
+        file_reviews (list): A list of dictionaries representing per-file review results.
+        score (int, optional): The calculated quality score of the pull request. Defaults to None.
+
+    Returns:
+        str: Formatted markdown string ready to be posted.
+    """
+    # Emojis representing the severity level of issues
     SEV_EMOJI = {
         "CRITICAL": "🔴",
         "HIGH":     "🟠",
@@ -84,6 +153,7 @@ def format_review_as_comment(file_reviews: list, score: int = None) -> str:
         "LOW":      "🟢",
     }
 
+    # Internal helper to format markdown headers and items for a specific review subcategory
     def section(emoji, title, items):
         if not items:
             return f"**{emoji} {title}** — ✅ No issues found  \n"
@@ -98,7 +168,8 @@ def format_review_as_comment(file_reviews: list, score: int = None) -> str:
                 lines += f"  > 💡 *Fix: {suggest}*  \n"
         return f"**{emoji} {title} ({len(items)})**  \n{lines}"
 
-    comment  = "## 🤖 AI PR Review\n"
+    # Build the header comment block
+    comment = "## 🤖 AI PR Review Summary\n\n"
     if score is not None:
         if score >= 80:
             health = "🟢 **Good Health**"
@@ -108,9 +179,9 @@ def format_review_as_comment(file_reviews: list, score: int = None) -> str:
             health = "🔴 **Critical Issues**"
         comment += f"### 📊 PR Quality Score: **{score} / 100** ({health})\n\n"
         
-    comment += "> *Automated review powered by **Groq LLaMA 3.3 70B** — per-file with severity scoring*\n\n"
     comment += "---\n\n"
 
+    # Compile the review findings for each file
     for file_review in file_reviews:
         filename = file_review.get("filename", "Unknown File")
         review   = file_review.get("review", {})
@@ -122,22 +193,63 @@ def format_review_as_comment(file_reviews: list, score: int = None) -> str:
         comment += section("🧹", "Code Quality",              review.get("code_quality_improvements", []))
         comment += "\n---\n\n"
 
-    comment += "*🔗 Generated by [AI PR Reviewer](https://github.com)*"
     return comment
 
 
 @app.get("/")
 def home():
+    """
+    Health check endpoint for the backend application.
+
+    Why:
+    Confirms to the client or hosting dashboard that the API server is online and running.
+
+    What happens:
+    Returns a success status response dictionary.
+
+    Returns:
+        dict: Status message block.
+    """
     return {
         "status": "success",
         "message": "AI PR Reviewer backend is running"
     }
 
 class GitHubLoginRequest(BaseModel):
+    """
+    Pydantic model representing incoming request body for GitHub OAuth login.
+
+    Fields:
+        code (str): Temporary authorization code returned from GitHub OAuth flow.
+    """
     code: str
 
 @app.post("/auth/github")
 def github_login(req: GitHubLoginRequest, db: Session = Depends(get_db)):
+    """
+    Authenticates a user via GitHub OAuth credentials.
+
+    Why:
+    Exchanges temporary GitHub authorization codes for persistent OAuth tokens to query 
+    GitHub resources on behalf of the user, logging in or registering the user records locally.
+
+    What happens:
+    1. Sends a POST request to GitHub token URL with OAuth client secrets.
+    2. Uses the returned token to query the user's GitHub profile.
+    3. Searches for an existing user record. Updates username/avatar and token if found,
+       otherwise registers a new User record in the database.
+    4. Issues a JWT token representing user's session in our application.
+
+    Args:
+        req (GitHubLoginRequest): Request containing the authorization code.
+        db (Session): Database session.
+
+    Returns:
+        dict: System JWT token, user name, and avatar URL.
+
+    Raises:
+        HTTPException: If token exchange fails.
+    """
     # 1. Exchange 'code' for a GitHub Access Token
     token_url = "https://github.com/login/oauth/access_token"
     payload = {
@@ -184,6 +296,24 @@ def github_login(req: GitHubLoginRequest, db: Session = Depends(get_db)):
 
 @app.get("/pr-details")
 def get_pr_details(pr_url: str):
+    """
+    Fetches base metadata details of a Pull Request.
+
+    Why:
+    Provides basic PR details to show on the UI screen when a PR URL is entered.
+
+    What happens:
+    Parses the PR URL, contacts GitHub API, and returns title, state, author, and changed files count.
+
+    Args:
+        pr_url (str): Target Pull Request URL.
+
+    Returns:
+        dict: Object containing PR details.
+
+    Raises:
+        HTTPException: If parsing or API fetching encounters an exception.
+    """
     try:
         parsed_data = parse_pr_url(pr_url)
         pr_details = fetch_pr_details(
@@ -227,7 +357,25 @@ def get_pr_details(pr_url: str):
 # -----------------------------------------------------------------------
 @app.get("/ai-review")
 def ai_review(pr_url: str):
+    """
+    Performs AI code review on each changed file in a Pull Request.
 
+    Why:
+    Allows user to trigger an automated code review and display findings locally on screen.
+
+    What happens:
+    Parses the PR URL, fetches the list of files and patches, reviews each patch individually via AI,
+    aggregates results, computes quality scores, and returns full structured data.
+
+    Args:
+        pr_url (str): Target Pull Request URL.
+
+    Returns:
+        dict: Detailed reviews per file and the aggregate score.
+
+    Raises:
+        HTTPException: If any error is caught during parsing or review operations.
+    """
     try:
         parsed_data = parse_pr_url(pr_url)
 
@@ -294,6 +442,32 @@ def ai_review(pr_url: str):
 # -----------------------------------------------------------------------
 @app.post("/post-review")
 def post_review_to_github(req: PostReviewRequest, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    """
+    Reviews a PR and publishes the resulting markdown report as a comment on GitHub.
+
+    Why:
+    Posts feedback directly on GitHub PR timelines, enabling developers to review recommendations
+    within their existing workflows. Saves the review history records locally for analytical dashboards.
+
+    What happens:
+    1. Retrieves/decrypts GitHub authorization token from the database.
+    2. Parses the PR URL and fetches changed file diffs.
+    3. Requests AI evaluations for each file.
+    4. Formats evaluations into markdown comment format.
+    5. Dispatches comment to GitHub API issues comment endpoint.
+    6. Stores ReviewHistory logs in the database.
+
+    Args:
+        req (PostReviewRequest): Requested PR URL.
+        db (Session): Database session.
+        current_user (User): Authenticated user instance from auth dependency.
+
+    Returns:
+        dict: Success message along with the comment URL link.
+
+    Raises:
+        HTTPException: If parsing, API requests, or posting actions fail.
+    """
     pr_url = req.pr_url
     github_token = decrypt_token(current_user.encrypted_github_token)
 
@@ -368,11 +542,25 @@ def post_review_to_github(req: PostReviewRequest, db: Session = Depends(get_db),
 # Listens for GitHub pull_request events and processes them in the background.
 # -----------------------------------------------------------------------
 
-# Dummy secret for demonstration. In production, store this in a DB per user.
+# Dummy secret for webhook signature verification
 WEBHOOK_SECRET = "sk_web_987654321"
 
 def process_webhook_pr(pr_url: str, github_token: str):
-    """Background task to review a PR triggered by a webhook."""
+    """
+    Background worker task to perform PR reviews triggered by GitHub webhooks.
+
+    Why:
+    Performs time-consuming API calls and AI reviews in a background thread to prevent blocking 
+    the webhook response.
+
+    What happens:
+    Parses the target PR URL, fetches the changed files, performs AI diff reviews, calculates 
+    quality scores, formats the comments, posts them to GitHub, and saves the history logs.
+
+    Args:
+        pr_url (str): Pull Request URL.
+        github_token (str): User token or empty placeholder.
+    """
     try:
         parsed_data = parse_pr_url(pr_url)
         owner = parsed_data["owner"]
@@ -431,6 +619,31 @@ async def github_webhook(
     x_hub_signature_256: str = Header(None),
     x_github_event: str = Header(None)
 ):
+    """
+    HTTP POST endpoint to receive webhook payloads from GitHub.
+
+    Why:
+    Allows GitHub to automatically trigger AI reviews when a Pull Request is opened or synchronized.
+
+    What happens:
+    1. Verifies the SHA256 HMAC signature using WEBHOOK_SECRET.
+    2. Checks if the header contains 'pull_request' events.
+    3. Decodes the payload and checks if action is 'opened' or 'synchronize'.
+    4. Enqueues a background task to process the Pull Request review.
+
+    Args:
+        user_id (str): User identifier target.
+        request (Request): Webhook request instance.
+        background_tasks (BackgroundTasks): Background runner.
+        x_hub_signature_256 (str): HMAC signature header.
+        x_github_event (str): GitHub event header.
+
+    Returns:
+        dict: Status message indicating whether task was accepted or ignored.
+
+    Raises:
+        HTTPException: If signatures or JSON payloads are invalid.
+    """
     # 1. Verify Signature
     if not x_hub_signature_256:
         raise HTTPException(status_code=401, detail="Missing signature")
@@ -478,7 +691,23 @@ async def github_webhook(
 # -----------------------------------------------------------------------
 @app.get("/analytics/{owner}/{repo}")
 def get_repo_analytics(owner: str, repo: str, db: Session = Depends(get_db)):
-    """Fetch historical analytics for a specific repository."""
+    """
+    Fetches historical review analytics for a repository.
+
+    Why:
+    Provides dashboard panels with key repo metrics like total reviews, average PR score, and list of past runs.
+
+    What happens:
+    Queries database logs filtering by owner and repo, calculates average PR scores, and lists up to 50 entries.
+
+    Args:
+        owner (str): Owner of the GitHub repository.
+        repo (str): Repository name.
+        db (Session): Database session.
+
+    Returns:
+        dict: Repository details, totals, averages, and historical review list.
+    """
     records = db.query(models.ReviewHistory).filter(
         models.ReviewHistory.owner == owner,
         models.ReviewHistory.repo == repo

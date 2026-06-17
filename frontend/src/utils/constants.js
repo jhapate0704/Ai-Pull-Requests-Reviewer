@@ -1,4 +1,19 @@
-// Severity config — used across components
+/**
+ * File: constants.js
+ *
+ * Purpose:
+ * Stores immutable configurations and values shared across the frontend components.
+ *
+ * Responsibilities:
+ * - Define severity level styling properties (background colors, badges, borders, emojis).
+ * - Configure displayed review categories mapping to matching API payload keys.
+ * - Store the base backend routing endpoint prefix.
+ *
+ * Dependencies:
+ * - None
+ */
+
+// Severity level config — defines the color theme class mappings for different severity options
 export const SEVERITY = {
   CRITICAL: {
     label: 'CRITICAL',
@@ -30,7 +45,7 @@ export const SEVERITY = {
   },
 }
 
-// Review sections shown per file
+// Review sections shown per file — maps category indicators to matching JSON keys from Groq APIs
 export const REVIEW_SECTIONS = [
   { emoji: '🐞', title: 'Bugs',             key: 'bugs' },
   { emoji: '🔒', title: 'Security Issues',  key: 'security_issues' },
@@ -39,5 +54,5 @@ export const REVIEW_SECTIONS = [
   { emoji: '🧹', title: 'Code Quality',     key: 'code_quality_improvements' },
 ]
 
-// Backend base URL — proxied through Vite
+// Backend base URL — proxied through Vite configurations
 export const API_BASE = '/api'

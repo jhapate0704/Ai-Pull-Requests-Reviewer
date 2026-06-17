@@ -1,9 +1,18 @@
 /**
- * Spinner — centered loading indicator with label.
+ * File: Spinner.jsx
+ *
+ * Purpose:
+ * Renders a centered animated loading indicator spinner with a descriptive text label.
+ *
+ * Responsibilities:
+ * - Display a looping spinner layout using border animation CSS keys.
+ * - Accept and display custom descriptive loading text strings.
+ * - Supply assistive readers with matching 'status' role labels.
  *
  * Props:
- *   label {string}
+ * - label (string): Descriptive loading message (e.g. 'Processing...', 'Reviewing...'). Defaults to 'Loading…'.
  */
+
 export default function Spinner({ label = 'Loading…' }) {
   return (
     <div className="flex flex-col items-center gap-4 py-16" role="status" aria-label={label}>

@@ -1,9 +1,30 @@
+/**
+ * File: prService.js
+ *
+ * Purpose:
+ * Service module handling API request communication with the backend endpoints
+ * (fetching PR details, triggering reviews, posting comments, loading analytics).
+ *
+ * Responsibilities:
+ * - Build and dispatch HTTP request URLs using base constants.
+ * - Inject JWT authorization tokens if user session is active.
+ * - Throw descriptive API errors if responses fail verification checks.
+ *
+ * Dependencies:
+ * - API_BASE constant (utils/constants)
+ */
+
 import { API_BASE } from '../utils/constants'
 
 /**
- * Fetch PR details (author, state, title, changed_files).
- * @param {string} prUrl
- * @returns {Promise<Object>}
+ * Fetch Pull Request details (author, state, title, changed_files).
+ *
+ * Why:
+ * Displays basic descriptive information about the target PR in banners.
+ *
+ * @param {string} prUrl - Full GitHub PR link.
+ * @param {AbortSignal} signal - Network abort listener signal.
+ * @returns {Promise<object>} Pull Request metadata payload.
  */
 export async function fetchPRDetails(prUrl, signal) {
   const res  = await fetch(`${API_BASE}/pr-details?pr_url=${encodeURIComponent(prUrl)}`, { signal })
@@ -13,9 +34,14 @@ export async function fetchPRDetails(prUrl, signal) {
 }
 
 /**
- * Run the per-file AI review.
- * @param {string} prUrl
- * @returns {Promise<{ filesReviewed: number, reviews: Array }>}
+ * Executes the per-file code analysis review.
+ *
+ * Why:
+ * Fetches review finding details and quality scores from the AI evaluation engine.
+ *
+ * @param {string} prUrl - Full GitHub PR link.
+ * @param {AbortSignal} signal - Network abort listener signal.
+ * @returns {Promise<object>} Reviewed files counts and issue cards array.
  */
 export async function fetchAIReview(prUrl, signal) {
   const res  = await fetch(`${API_BASE}/ai-review?pr_url=${encodeURIComponent(prUrl)}`, { signal })
@@ -28,9 +54,13 @@ export async function fetchAIReview(prUrl, signal) {
 }
 
 /**
- * Post the AI review as a GitHub PR comment.
- * @param {string} prUrl
- * @returns {Promise<string>} comment HTML URL
+ * Posts AI reviews back to target Pull Requests as a comment on GitHub.
+ *
+ * Why:
+ * Publishes reports to GitHub PR timelines to make suggestions visible to developers.
+ *
+ * @param {string} prUrl - Full GitHub PR link.
+ * @returns {Promise<string>} The direct HTML comment URL.
  */
 export async function postReviewToGitHub(prUrl) {
   const token = localStorage.getItem('app_token')
@@ -48,10 +78,14 @@ export async function postReviewToGitHub(prUrl) {
 }
 
 /**
- * Fetch team analytics for a specific repository.
- * @param {string} owner
- * @param {string} repo
- * @returns {Promise<Object>}
+ * Fetch team review analytics for a repository.
+ *
+ * Why:
+ * Renders statistical summary panels and audit history charts on dashboard views.
+ *
+ * @param {string} owner - Target repository owner handle.
+ * @param {string} repo - Target repository name.
+ * @returns {Promise<object>} Repository statistics payload.
  */
 export async function fetchTeamAnalytics(owner, repo) {
   const res  = await fetch(`${API_BASE}/analytics/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`)

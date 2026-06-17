@@ -1,19 +1,29 @@
-import IssueItem from './IssueItem'
-
 /**
- * SectionPanel — panel for one review category (Bugs, Security, etc.)
+ * File: SectionPanel.jsx
+ *
+ * Purpose:
+ * Renders a card panel representing a specific review finding category (e.g. Bugs, Security, Code Quality).
+ *
+ * Responsibilities:
+ * - Render category headers with matching icons/emojis and count badges.
+ * - Display a success placeholder if the category has zero issues (clean status).
+ * - Map list of findings to individual IssueItem components if issues exist.
  *
  * Props:
- *   emoji  {string}
- *   title  {string}
- *   items  {Array}
+ * - emoji (string): Visual category icon/emoji.
+ * - title (string): Display name of the category.
+ * - items (array): List of issues/findings belonging to the category.
  */
+
+import IssueItem from './IssueItem'
+
 export default function SectionPanel({ emoji, title, items }) {
+  // Check if findings exist in this section
   const hasIssues = items.length > 0
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/8 dark:bg-gray-900/50">
-      {/* Header */}
+      {/* Category header title and numeric item count badge */}
       <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-3.5 py-2.5 dark:border-white/8 dark:bg-gray-800/40">
         <span className="flex items-center gap-1.5 text-sm font-semibold text-gray-800 dark:text-gray-200">
           {emoji} {title}
@@ -30,7 +40,7 @@ export default function SectionPanel({ emoji, title, items }) {
         </span>
       </div>
 
-      {/* Body */}
+      {/* Body segment showing success banner or lists of IssueItems */}
       {!hasIssues ? (
         <div className="flex items-center gap-1.5 px-3.5 py-3 text-sm text-gray-500 dark:text-gray-500">
           <span>✅</span> No issues found
