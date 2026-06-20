@@ -104,3 +104,4 @@ websockets==16.0
 groq
 sqlalchemy
 psycopg2-binary
+PyJWT
