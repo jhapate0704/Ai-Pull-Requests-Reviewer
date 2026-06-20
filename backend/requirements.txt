@@ -105,3 +105,4 @@ groq
 sqlalchemy
 psycopg2-binary
 PyJWT
+cryptography
