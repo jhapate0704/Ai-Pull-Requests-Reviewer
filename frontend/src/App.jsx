@@ -74,7 +74,7 @@ export default function App() {
       window.history.replaceState({}, document.title, window.location.pathname)
       
       // Request JWT credentials and profile details using OAuth code
-      fetch('http://localhost:8000/auth/github', {
+      fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/auth/github`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code })

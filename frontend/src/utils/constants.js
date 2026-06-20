@@ -55,4 +55,4 @@ export const REVIEW_SECTIONS = [
 ]
 
 // Backend base URL — proxied through Vite configurations
-export const API_BASE = '/api'
+export const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
