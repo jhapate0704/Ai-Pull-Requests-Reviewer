@@ -52,10 +52,7 @@ export default function SearchBar({
               onChange={(e) => onUrlChange(e.target.value)}
               onKeyDown={handleKey}
               placeholder="https://github.com/owner/repo/pull/"
-              className="h-16 w-full rounded-2xl border-2 border-gray-300 bg-gray-50 px-10 text-base sm:text-lg
-  text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 focus:border-violet-500
-  focus:ring-4 focus:ring-violet-500/20 dark:border-white/10 dark:bg-gray-800/60 dark:text-white
-  dark:placeholder:text-gray-500"
+              className="h-16 w-full rounded-2xl border-2 border-gray-300 bg-gray-50 px-10 text-base sm:text-lg text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/20 dark:border-white/10 dark:bg-gray-800/60 dark:text-white dark:placeholder:text-gray-500"
             />
             <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
               {/* Main Review execution trigger */}
@@ -81,13 +78,13 @@ export default function SearchBar({
           </div>
 
       {/* GitHub Comment Posting execution row */}
-      <div className="mt-4 flex flex-col items-start gap-3 sm:auto sm:items-center">
+      <div className="mt-4 flex flex-col items-center justify-center gap-3 sm:auto">
         <button
           id="post-review-btn"
           onClick={onPost}
           disabled={busy || !hasReviews}
           title={!token ? 'Add a GitHub token to enable posting' : !hasReviews ? 'Run a review first' : ''}
-          className="h-15 w-full cursor-pointer rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 px-5 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-cyan-500/35 disabled:cursor-not-allowed disabled:opacity-40 disabled:transform-none sm:w-auto"
+          className="h-16 w-full cursor-pointer rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-600 px-5 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-cyan-500/35 disabled:cursor-not-allowed disabled:opacity-40 disabled:transform-none sm:w-auto"
         >
           {posting ? '⏳ Posting…' : '📤 Post Review to GitHub'}
         </button>
