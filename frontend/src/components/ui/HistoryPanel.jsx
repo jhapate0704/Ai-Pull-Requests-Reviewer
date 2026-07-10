@@ -67,7 +67,7 @@ export default function HistoryPanel({ open, onClose, history, onLoad, onRemove,
             {history.length > 0 && (
               <button
                 onClick={onClear}
-                className="rounded-lg border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-100 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20"
+                className="rounded-lg border border-red-200 bg-red-50 px-2.5 py-1 min-h-[48px] text-xs font-medium text-red-600 transition-colors hover:bg-red-100 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20"
               >
                 Clear all
               </button>
@@ -75,7 +75,7 @@ export default function HistoryPanel({ open, onClose, history, onLoad, onRemove,
             <button
               id="close-history-btn"
               onClick={onClose}
-              className="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/10 dark:hover:text-white"
+              className="flex h-12 w-12 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/10 dark:hover:text-white"
               aria-label="Close history panel"
             >
               ✕
@@ -140,7 +140,7 @@ export default function HistoryPanel({ open, onClose, history, onLoad, onRemove,
                       {/* Hover action delete button */}
                       <button
                         onClick={(e) => { e.stopPropagation(); onRemove(entry.id) }}
-                        className="absolute right-2 top-2 hidden h-5 w-5 items-center justify-center rounded text-gray-400 hover:bg-gray-200 hover:text-red-500 group-hover:flex dark:hover:bg-white/10"
+                        className="absolute right-0 top-0 flex h-12 w-12 items-center justify-center rounded text-gray-400 hover:bg-gray-200 hover:text-red-500 dark:hover:bg-white/10"
                         title="Remove"
                         aria-label="Remove from history"
                       >

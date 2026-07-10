@@ -59,7 +59,7 @@ export default function Sidebar({
       <button
         onClick={() => handlePageChange(page)}
         className={[
-          'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all w-full',
+          'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all w-full min-h-[48px]',
           isActive 
             ? 'bg-violet-50 text-violet-700 dark:bg-gray-800 dark:text-violet-400' 
             : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800/50 dark:hover:text-white',
@@ -102,7 +102,7 @@ export default function Sidebar({
           </div>
           {/* Mobile Close Button */}
           <button 
-            className="md:hidden flex h-8 w-8 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
+            className="md:hidden flex h-12 w-12 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             ✕
@@ -121,7 +121,7 @@ export default function Sidebar({
           {/* History drawer toggle button */}
           <button
             onClick={() => { onHistoryOpen(); setIsMobileMenuOpen(false); }}
-            className="flex w-full items-center gap-3 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:border-violet-300 hover:text-violet-600 dark:border-white/10 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-violet-500/50 dark:hover:text-violet-400 md:justify-center lg:justify-start"
+            className="flex w-full min-h-[48px] items-center gap-3 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:border-violet-300 hover:text-violet-600 dark:border-white/10 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-violet-500/50 dark:hover:text-violet-400 md:justify-center lg:justify-start"
           >
             <span className="relative flex shrink-0 text-lg">
               📋
@@ -147,7 +147,7 @@ export default function Sidebar({
               </div>
               <button
                 onClick={onLogout}
-                className="flex w-full items-center gap-3 rounded-xl border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:border-white/10 dark:bg-gray-900 dark:text-red-400 dark:hover:bg-red-950/30 md:justify-center lg:justify-start"
+                className="flex w-full min-h-[48px] items-center gap-3 rounded-xl border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:border-white/10 dark:bg-gray-900 dark:text-red-400 dark:hover:bg-red-950/30 md:justify-center lg:justify-start"
               >
                 <span className="shrink-0 text-lg">🚪</span>
                 <span className="md:hidden lg:block truncate">Unlink Account</span>
@@ -156,7 +156,7 @@ export default function Sidebar({
           ) : (
             <button
               onClick={() => { onLogin(); setIsMobileMenuOpen(false); }}
-              className="flex w-full items-center gap-3 rounded-xl border border-gray-200 bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800 dark:border-white/10 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 md:justify-center lg:justify-start"
+              className="flex w-full min-h-[48px] items-center gap-3 rounded-xl border border-gray-200 bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800 dark:border-white/10 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 md:justify-center lg:justify-start"
             >
               <span className="shrink-0 text-lg">🐱</span>
               <span className="md:hidden lg:block truncate">Login with GitHub</span>
@@ -166,7 +166,7 @@ export default function Sidebar({
           {/* Theme Toggle Button */}
           <button
             onClick={onToggleTheme}
-            className="flex w-full items-center gap-3 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:border-violet-300 hover:text-violet-600 dark:border-white/10 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-violet-500/50 dark:hover:text-violet-400 md:justify-center lg:justify-start"
+            className="flex w-full min-h-[48px] items-center gap-3 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:border-violet-300 hover:text-violet-600 dark:border-white/10 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-violet-500/50 dark:hover:text-violet-400 md:justify-center lg:justify-start"
           >
             <span className="shrink-0 text-lg">{theme === 'dark' ? '☀️' : '🌙'}</span>
             <span className="md:hidden lg:block truncate">

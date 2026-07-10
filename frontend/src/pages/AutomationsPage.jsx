@@ -88,11 +88,11 @@ export default function AutomationsPage({ token, onLogin }) {
                   type="text"
                   readOnly
                   value={webhookUrl}
-                  className="block w-full min-w-0 flex-1 rounded-none rounded-l-xl border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-500 dark:border-white/10 dark:bg-gray-900 dark:text-gray-400 focus:outline-none"
+                  className="block w-full min-w-0 flex-1 min-h-[48px] rounded-none rounded-l-xl border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-500 dark:border-white/10 dark:bg-gray-900 dark:text-gray-400 focus:outline-none"
                 />
                 <button
                   onClick={() => copyToClipboard(webhookUrl, setCopiedUrl)}
-                  className="relative -ml-px inline-flex items-center space-x-2 rounded-r-xl border border-gray-300 bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:border-white/10 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                  className="relative -ml-px inline-flex min-h-[48px] items-center space-x-2 rounded-r-xl border border-gray-300 bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:border-white/10 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                 >
                   {copiedUrl ? '✅ Copied' : '📋 Copy'}
                 </button>
@@ -106,11 +106,11 @@ export default function AutomationsPage({ token, onLogin }) {
                   type="text"
                   readOnly
                   value={webhookSecret}
-                  className="block w-full min-w-0 flex-1 rounded-none rounded-l-xl border border-gray-300 bg-gray-50 px-4 py-2 font-mono text-sm text-gray-500 dark:border-white/10 dark:bg-gray-900 dark:text-gray-400 focus:outline-none"
+                  className="block w-full min-w-0 flex-1 min-h-[48px] rounded-none rounded-l-xl border border-gray-300 bg-gray-50 px-4 py-2 font-mono text-sm text-gray-500 dark:border-white/10 dark:bg-gray-900 dark:text-gray-400 focus:outline-none"
                 />
                 <button
                   onClick={() => copyToClipboard(webhookSecret, setCopiedSecret)}
-                  className="relative -ml-px inline-flex items-center space-x-2 rounded-r-xl border border-gray-300 bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:border-white/10 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                  className="relative -ml-px inline-flex min-h-[48px] items-center space-x-2 rounded-r-xl border border-gray-300 bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:border-white/10 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                 >
                   {copiedSecret ? '✅ Copied' : '📋 Copy'}
                 </button>

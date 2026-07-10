@@ -163,16 +163,16 @@ export default function App() {
 
       {/* Mobile Header (Only visible on small screens) */}
       <header className="md:hidden sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white/90 px-4 backdrop-blur-md dark:border-white/10 dark:bg-gray-950/90">
+        <button
+          onClick={() => setIsMobileMenuOpen(true)}
+          className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
+        >
+          ☰
+        </button>
         <div className="flex items-center gap-2">
           <span className="text-2xl">🤖</span>
           <span className="text-lg font-bold text-gray-900 dark:text-white">PR Reviewer</span>
         </div>
-        <button
-          onClick={() => setIsMobileMenuOpen(true)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
-        >
-          ☰
-        </button>
       </header>
 
       {/* Navigation and Actions Sidebar */}

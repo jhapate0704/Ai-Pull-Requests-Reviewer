@@ -98,11 +98,11 @@ export default function DashboardPage({ onLoadReview }) {
             value={repoInput}
             onChange={(e) => setRepoInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && loadAnalytics()}
-            className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-white/10 dark:bg-gray-800 dark:text-white"
+            className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2 min-h-[48px] text-sm text-gray-900 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-white/10 dark:bg-gray-800 dark:text-white"
           />
           <button 
             onClick={loadAnalytics}
-            className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700"
+            className="rounded-xl bg-violet-600 px-4 py-2 min-h-[48px] text-sm font-semibold text-white hover:bg-violet-700"
           >
             Load
           </button>
@@ -116,7 +116,7 @@ export default function DashboardPage({ onLoadReview }) {
       {!loading && analytics && (
         <>
           {/* Top Stats Cards Summary Row */}
-          <div className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
+          <div className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-gray-800/40">
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Team Reviews</p>
               <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{totalReviews}</p>
@@ -169,7 +169,7 @@ export default function DashboardPage({ onLoadReview }) {
                       )}
                       <a 
                         href={entry.pr_url} target="_blank" rel="noreferrer"
-                        className="rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                        className="flex min-h-[48px] items-center rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                       >
                         GitHub ↗
                       </a>
