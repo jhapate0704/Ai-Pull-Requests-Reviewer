@@ -91,7 +91,7 @@ export default function DashboardPage({ onLoadReview }) {
         </div>
         
         {/* Repository query search panel */}
-        <div className="flex w-full max-w-xs items-center gap-2">
+        <div className="flex w-full items-center gap-2">
           <input 
             type="text" 
             placeholder="owner/repo"
@@ -104,7 +104,7 @@ export default function DashboardPage({ onLoadReview }) {
             onClick={loadAnalytics}
             className="rounded-xl bg-violet-600 px-4 py-2 min-h-[48px] text-sm font-semibold text-white hover:bg-violet-700"
           >
-            Load
+            Load Analytics
           </button>
         </div>
       </div>

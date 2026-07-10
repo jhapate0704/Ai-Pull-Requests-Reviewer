@@ -38,6 +38,51 @@ Dependencies:
   --color-brand-800: #5b21b6;
   --color-brand-900: #4c1d95;
 
+  /* Theme Overrides: "Emerald & Amber" Theme */
+  --color-violet-50:  #ecfdf5;
+  --color-violet-100: #d1fae5;
+  --color-violet-200: #a7f3d0;
+  --color-violet-300: #6ee7b7;
+  --color-violet-400: #34d399;
+  --color-violet-500: #10b981;
+  --color-violet-600: #059669;
+  --color-violet-700: #047857;
+  --color-violet-800: #065f46;
+  --color-violet-900: #064e3b;
+
+  --color-indigo-50:  #f0fdfa;
+  --color-indigo-100: #ccfbf1;
+  --color-indigo-200: #99f6e4;
+  --color-indigo-300: #5eead4;
+  --color-indigo-400: #2dd4bf;
+  --color-indigo-500: #14b8a6;
+  --color-indigo-600: #0d9488;
+  --color-indigo-700: #0f766e;
+  --color-indigo-800: #115e59;
+  --color-indigo-900: #134e4a;
+
+  --color-cyan-50:  #fffbeb;
+  --color-cyan-100: #fef3c7;
+  --color-cyan-200: #fde68a;
+  --color-cyan-300: #fcd34d;
+  --color-cyan-400: #fbbf24;
+  --color-cyan-500: #f59e0b;
+  --color-cyan-600: #d97706;
+  --color-cyan-700: #b45309;
+  --color-cyan-800: #92400e;
+  --color-cyan-900: #78350f;
+
+  --color-blue-50:  #fff7ed;
+  --color-blue-100: #ffedd5;
+  --color-blue-200: #fed7aa;
+  --color-blue-300: #fdba74;
+  --color-blue-400: #fb923c;
+  --color-blue-500: #f97316;
+  --color-blue-600: #ea580c;
+  --color-blue-700: #c2410c;
+  --color-blue-800: #9a3412;
+  --color-blue-900: #7c2d12;
+
   --color-surface-900: #0d0f14;
   --color-surface-800: #13161e;
   --color-surface-700: #1a1e2a;
