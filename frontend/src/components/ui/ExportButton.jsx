@@ -79,7 +79,7 @@ export default function ExportButton({ prDetails, reviews, prUrl }) {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full z-30 mt-2 w-52 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl dark:border-white/10 dark:bg-gray-900"
+          className="absolute left-0 sm:left-auto sm:right-0 top-full z-30 mt-2 w-52 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl dark:border-white/10 dark:bg-gray-900"
         >
           {/* Markdown Download Option */}
           <button
