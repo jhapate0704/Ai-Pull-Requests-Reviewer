@@ -61,6 +61,9 @@ export default function App() {
   // Determines current active page view ('review' | 'dashboard' | 'automations')
   const [currentPage,   setCurrentPage]                 = useState('review')
 
+  // Controls desktop sidebar collapse state
+  const [isCollapsed,   setIsCollapsed]                 = useState(false)
+
   // Handle GitHub OAuth Callback
   // Why:
   // After redirects from GitHub OAuth, the URL search parameters contain a 'code' value.
@@ -191,6 +194,8 @@ export default function App() {
         onPageChange={setCurrentPage}
         isMobileMenuOpen={isMobileMenuOpen}
         setIsMobileMenuOpen={setIsMobileMenuOpen}
+        isCollapsed={isCollapsed}
+        setIsCollapsed={setIsCollapsed}
       />
 
       {/* History Drawer slide-out panel */}
@@ -204,7 +209,7 @@ export default function App() {
       />
 
       {/* Route Views Switcher */}
-      <main className="relative z-10 flex-1 overflow-y-auto md:ml-20 lg:ml-64 transition-all duration-300">
+      <main className={`relative z-10 flex-1 overflow-y-auto transition-all duration-300 ${isCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
         {/* Pull Request review execution view */}
         {currentPage === 'review' && (
           <ReviewPage
@@ -240,7 +245,7 @@ export default function App() {
       </main>
 
       {/* System Footer bar */}
-      <Footer onPageChange={setCurrentPage} />
+      <Footer onPageChange={setCurrentPage} isCollapsed={isCollapsed} />
     </div>
   )
 }

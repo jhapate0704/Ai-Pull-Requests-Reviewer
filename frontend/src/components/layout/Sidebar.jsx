@@ -32,7 +32,7 @@ import { useState } from 'react'
 
 export default function Sidebar({ 
   token, username, avatarUrl, onLogin, onLogout, theme, onToggleTheme, historyCount, onHistoryOpen, 
-  currentPage, onPageChange, isMobileMenuOpen, setIsMobileMenuOpen 
+  currentPage, onPageChange, isMobileMenuOpen, setIsMobileMenuOpen, isCollapsed, setIsCollapsed 
 }) {
 
   /**
@@ -63,11 +63,11 @@ export default function Sidebar({
           isActive 
             ? 'bg-violet-50 text-violet-700 dark:bg-gray-800 dark:text-violet-400' 
             : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800/50 dark:hover:text-white',
-          'md:justify-center lg:justify-start'
+          isCollapsed ? 'justify-center' : 'justify-start'
         ].join(' ')}
       >
         <span className="text-xl shrink-0">{icon}</span>
-        <span className="md:hidden lg:block truncate">{label}</span>
+        <span className={`truncate ${isCollapsed ? 'hidden' : 'block'}`}>{label}</span>
       </button>
     )
   }
@@ -85,24 +85,31 @@ export default function Sidebar({
       {/* Sidebar Container */}
       <aside
         className={[
-          'fixed inset-y-0 left-0 z-50 flex flex-col border-r border-gray-200 bg-white transition-transform duration-300 dark:border-white/10 dark:bg-gray-950',
-          // Widths: Collapses to narrow bar on tablet (md), expands fully on desktop (lg)
-          'w-64 md:w-20 lg:w-64',
+          'fixed inset-y-0 left-0 z-50 flex flex-col border-r border-gray-200 bg-white transition-all duration-300 dark:border-white/10 dark:bg-gray-950',
+          // Widths: dynamic based on state
+          isCollapsed ? 'w-20' : 'w-64',
           // Mobile: Drawer slide logic
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
         ].join(' ')}
       >
         {/* Brand Header */}
         <div className="flex h-16 items-center justify-between px-4 border-b border-gray-200 dark:border-white/10">
-          <div className="flex items-center gap-2.5 overflow-hidden">
-            <span className="text-2xl shrink-0">🤖</span>
-            <span className="text-base font-bold tracking-tight text-gray-900 dark:text-white truncate md:hidden lg:block">
+          <div className="flex items-center gap-2 overflow-hidden">
+            <span className="shrink-0">🤖</span>
+            <span className={`text-base font-bold tracking-tight text-gray-900 dark:text-white truncate ${isCollapsed ? 'hidden' : 'block'}`}>
               PR Reviewer
             </span>
           </div>
+          {/* Desktop Toggle Button */}
+          <button 
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="hidden md:flex h-10 w-6 shrink-0 items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500"
+          >
+            {isCollapsed ? '▶' : '◀'}
+          </button>
           {/* Mobile Close Button */}
           <button 
-            className="md:hidden flex h-12 w-12 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
+            className="md:hidden flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             ✕
@@ -121,7 +128,7 @@ export default function Sidebar({
           {/* History drawer toggle button */}
           <button
             onClick={() => { onHistoryOpen(); setIsMobileMenuOpen(false); }}
-            className="flex w-full min-h-[48px] items-center gap-3 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:border-violet-300 hover:text-violet-600 dark:border-white/10 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-violet-500/50 dark:hover:text-violet-400 md:justify-center lg:justify-start"
+            className={`flex w-full min-h-[48px] items-center gap-3 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:border-violet-300 hover:text-violet-600 dark:border-white/10 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-violet-500/50 dark:hover:text-violet-400 ${isCollapsed ? 'justify-center' : 'justify-start'}`}
           >
             <span className="relative flex shrink-0 text-lg">
               📋
@@ -131,45 +138,45 @@ export default function Sidebar({
                 </span>
               )}
             </span>
-            <span className="md:hidden lg:block truncate">History</span>
+            <span className={`truncate ${isCollapsed ? 'hidden' : 'block'}`}>History</span>
           </button>
 
           {/* GitHub Session Actions */}
           {token ? (
             <div className="flex flex-col gap-1">
-              <div className="flex w-full items-center gap-3 rounded-xl border border-green-500/40 bg-green-500/10 px-3 py-2 text-sm font-medium text-green-700 dark:text-green-400 md:justify-center lg:justify-start">
+              <div className={`flex w-full items-center gap-3 rounded-xl border border-green-500/40 bg-green-500/10 px-3 py-2 text-sm font-medium text-green-700 dark:text-green-400 ${isCollapsed ? 'justify-center' : 'justify-start'}`}>
                 {avatarUrl ? (
-                  <img src={avatarUrl} alt="avatar" className="h-6 w-6 rounded-full" />
+                  <img src={avatarUrl} alt="avatar" className="h-6 w-6 shrink-0 rounded-full" />
                 ) : (
                   <span className="shrink-0 text-lg">👤</span>
                 )}
-                <span className="md:hidden lg:block truncate text-xs">{username}</span>
+                <span className={`truncate text-xs ${isCollapsed ? 'hidden' : 'block'}`}>{username}</span>
               </div>
               <button
                 onClick={onLogout}
-                className="flex w-full min-h-[48px] items-center gap-3 rounded-xl border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:border-white/10 dark:bg-gray-900 dark:text-red-400 dark:hover:bg-red-950/30 md:justify-center lg:justify-start"
+                className={`flex w-full min-h-[48px] items-center gap-3 rounded-xl border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:border-white/10 dark:bg-gray-900 dark:text-red-400 dark:hover:bg-red-950/30 ${isCollapsed ? 'justify-center' : 'justify-start'}`}
               >
                 <span className="shrink-0 text-lg">🚪</span>
-                <span className="md:hidden lg:block truncate">Unlink Account</span>
+                <span className={`truncate ${isCollapsed ? 'hidden' : 'block'}`}>Unlink Account</span>
               </button>
             </div>
           ) : (
             <button
               onClick={() => { onLogin(); setIsMobileMenuOpen(false); }}
-              className="flex w-full min-h-[48px] items-center gap-3 rounded-xl border border-gray-200 bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800 dark:border-white/10 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 md:justify-center lg:justify-start"
+              className={`flex w-full min-h-[48px] items-center gap-3 rounded-xl border border-gray-200 bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800 dark:border-white/10 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 ${isCollapsed ? 'justify-center' : 'justify-start'}`}
             >
               <span className="shrink-0 text-lg">🐱</span>
-              <span className="md:hidden lg:block truncate">Login with GitHub</span>
+              <span className={`truncate ${isCollapsed ? 'hidden' : 'block'}`}>Login with GitHub</span>
             </button>
           )}
 
           {/* Theme Toggle Button */}
           <button
             onClick={onToggleTheme}
-            className="flex w-full min-h-[48px] items-center gap-3 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:border-violet-300 hover:text-violet-600 dark:border-white/10 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-violet-500/50 dark:hover:text-violet-400 md:justify-center lg:justify-start"
+            className={`flex w-full min-h-[48px] items-center gap-3 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:border-violet-300 hover:text-violet-600 dark:border-white/10 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-violet-500/50 dark:hover:text-violet-400 ${isCollapsed ? 'justify-center' : 'justify-start'}`}
           >
             <span className="shrink-0 text-lg">{theme === 'dark' ? '☀️' : '🌙'}</span>
-            <span className="md:hidden lg:block truncate">
+            <span className={`truncate ${isCollapsed ? 'hidden' : 'block'}`}>
               {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
             </span>
           </button>

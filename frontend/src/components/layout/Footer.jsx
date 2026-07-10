@@ -12,9 +12,9 @@
  * - React
  */
 
-export default function Footer({ onPageChange }) {
+export default function Footer({ onPageChange, isCollapsed }) {
   return (
-    <footer className="mt-auto shrink-0 border-t border-gray-200 py-4 text-center text-xs text-gray-500 md:ml-20 lg:ml-64 dark:border-white/10 dark:text-gray-500 relative z-20">
+    <footer className={`mt-auto shrink-0 border-t border-gray-200 py-4 text-center text-xs text-gray-500 relative z-20 transition-all duration-300 ${isCollapsed ? 'md:ml-20' : 'md:ml-64'} dark:border-white/10 dark:text-gray-500`}>
       <div className="mb-2">
         <button 
           onClick={() => onPageChange && onPageChange('about')}
