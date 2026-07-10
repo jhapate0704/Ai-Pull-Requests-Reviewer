@@ -28,6 +28,7 @@ import HistoryPanel          from './components/ui/HistoryPanel'
 import ReviewPage            from './pages/ReviewPage'
 import DashboardPage         from './pages/DashboardPage'
 import AutomationsPage       from './pages/AutomationsPage'
+import AboutPage             from './pages/AboutPage'
 
 export default function App() {
   // Toggle utilities and styling configurations for light/dark theme layout
@@ -231,10 +232,15 @@ export default function App() {
             onLogin={handleGitHubLogin}
           />
         )}
+        
+        {/* About/Help Instructions view */}
+        {currentPage === 'about' && (
+          <AboutPage />
+        )}
       </main>
 
       {/* System Footer bar */}
-      <Footer />
+      <Footer onPageChange={setCurrentPage} />
     </div>
   )
 }
