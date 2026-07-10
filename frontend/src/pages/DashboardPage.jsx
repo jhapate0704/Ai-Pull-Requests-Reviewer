@@ -150,7 +150,7 @@ export default function DashboardPage({ onLoadReview }) {
                 {history.map(entry => (
                   <li key={entry.id} className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 sm:p-6">
                     <div>
-                      <a href={entry.pr_url} target="_blank" rel="noreferrer" className="font-mono text-sm font-bold text-violet-600 hover:underline dark:text-violet-400">
+                      <a href={entry.pr_url} title={entry.pr_url} target="_blank" rel="noreferrer" className="font-mono text-sm font-bold text-violet-600 hover:underline dark:text-violet-400">
                         {entry.pr_url.split('github.com/')[1] || entry.pr_url}
                       </a>
                       <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
