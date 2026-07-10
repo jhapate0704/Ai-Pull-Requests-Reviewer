@@ -56,7 +56,7 @@ export default function PRDetailsBanner({ details }) {
       {details.title && (
         <div className="flex items-start gap-2.5 rounded-xl border border-violet-200 bg-violet-50 px-4 py-3 dark:border-violet-500/20 dark:bg-violet-500/8">
           <span className="mt-0.5 shrink-0 text-sm">📝</span>
-          <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{details.title}</p>
+          <p className="text-sm font-medium text-gray-800 dark:text-gray-200">PR Title: {details.title}</p>
         </div>
       )}
     </section>
