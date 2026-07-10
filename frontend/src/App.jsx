@@ -149,7 +149,7 @@ export default function App() {
 
   return (
     <div
-      className="flex min-h-screen flex-col font-sans"
+      className="flex h-[100dvh] flex-col overflow-hidden font-sans"
       style={{
         backgroundColor: theme === 'dark' ? '#030712' : '#f8fafc',
         color:           theme === 'dark' ? '#f9fafb' : '#111827',
@@ -163,7 +163,7 @@ export default function App() {
       </div>
 
       {/* Mobile Header (Only visible on small screens) */}
-      <header className="md:hidden sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white/90 px-4 backdrop-blur-md dark:border-white/10 dark:bg-gray-950/90">
+      <header className="md:hidden shrink-0 sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white/90 px-4 backdrop-blur-md dark:border-white/10 dark:bg-gray-950/90">
         <button
           onClick={() => setIsMobileMenuOpen(true)}
           className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
@@ -204,7 +204,7 @@ export default function App() {
       />
 
       {/* Route Views Switcher */}
-      <main className="relative z-10 flex-1 md:ml-20 lg:ml-64 transition-all duration-300">
+      <main className="relative z-10 flex-1 overflow-y-auto md:ml-20 lg:ml-64 transition-all duration-300">
         {/* Pull Request review execution view */}
         {currentPage === 'review' && (
           <ReviewPage

@@ -14,7 +14,7 @@
 
 export default function Footer({ onPageChange }) {
   return (
-    <footer className="mt-auto border-t border-gray-200 py-6 text-center text-xs text-gray-500 dark:border-white/10 dark:text-gray-500">
+    <footer className="mt-auto shrink-0 border-t border-gray-200 py-4 text-center text-xs text-gray-500 md:ml-20 lg:ml-64 dark:border-white/10 dark:text-gray-500 relative z-20">
       <div className="mb-2">
         <button 
           onClick={() => onPageChange && onPageChange('about')}
