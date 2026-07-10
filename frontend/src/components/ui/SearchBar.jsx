@@ -51,7 +51,7 @@ export default function SearchBar({
           onChange={(e) => onUrlChange(e.target.value)}
           onKeyDown={handleKey}
           placeholder="https://github.com/owner/repo/pull/"
-          className="h-20 flex-2 rounded-2xl border-2 border-gray-300 bg-gray-50 px-10 text-2xl text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/20 dark:border-white/10 dark:bg-gray-800/60 dark:text-white dark:placeholder:text-gray-500"
+          className="h-15 flex-2 rounded-2xl border-2 border-gray-300 bg-gray-50 px-10 text-xs text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/20 dark:border-white/10 dark:bg-gray-800/60 dark:text-white dark:placeholder:text-gray-500"
         />
         <div className="flex flex-col gap-3 sm:flex-row">
           {/* Main Review execution trigger */}
