@@ -133,6 +133,13 @@ export default function ReviewPage({
         {/* Renders basic metadata details banner */}
         {prDetails && !loading && <PRDetailsBanner details={prDetails} />}
 
+        {/* Completed execution timers */}
+            {reviewTimeMs > 0 && (
+              <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-4">
+                <span className="font-bold text-[19px]">⏱️ Review completed in {(reviewTimeMs / 1000).toFixed(1)}s </span>
+              </p>
+            )}
+
         {/* Renders full set of card evaluations list */}
         {reviews.length > 0 && !loading && (
           <>
@@ -143,12 +150,7 @@ export default function ReviewPage({
               prUrl={prUrl}
               prScore={prScore}
             />
-            {/* Completed execution timers */}
-            {reviewTimeMs > 0 && (
-              <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-4">
-                ⏱️ Review completed in {(reviewTimeMs / 1000).toFixed(1)}s
-              </p>
-            )}
+          
           </>
         )}
       </div>

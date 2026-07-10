@@ -95,6 +95,7 @@ export default function SearchBar({
             ⚠️ Add a GitHub token to enable posting
           </span>
         )}
+        
       </div>
     </div>
   )
