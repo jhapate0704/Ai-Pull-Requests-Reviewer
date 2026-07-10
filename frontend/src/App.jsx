@@ -235,7 +235,7 @@ export default function App() {
         
         {/* About/Help Instructions view */}
         {currentPage === 'about' && (
-          <AboutPage />
+          <AboutPage onGoHome={() => setCurrentPage('review')} />
         )}
       </main>
 

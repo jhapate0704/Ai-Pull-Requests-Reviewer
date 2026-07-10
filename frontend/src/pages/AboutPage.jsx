@@ -1,7 +1,12 @@
-export default function AboutPage() {
+  export default function AboutPage({onGoHome}) {
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8 border-b border-gray-200 pb-5 dark:border-white/10">
+        <button
+          onClick={onGoHome}
+          className="mb-4 flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-400">
+          <span>←</span>Back
+        </button>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">About & Help</h1>
         <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">
           Everything you need to know to use the AI PR Reviewer effectively.
@@ -13,7 +18,7 @@ export default function AboutPage() {
         <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-gray-800/40">
           <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">🔍 Reviewing Pull Requests</h2>
           <div className="space-y-3 text-gray-600 dark:text-gray-300 text-sm">
-            <p><strong>1. Get a URL:</strong> Copy any public or private GitHub Pull Request URL (e.g. <code>https://github.com/owner/repo/pull/1</code>).</p>
+            <p><strong>1. Get a URL:</strong> Copy any public or private GitHub Pull Request URL (e.g. <code>https://github.com/owner/repo/pull/</code>).</p>
             <p><strong>2. Paste & Review:</strong> Navigate to the <strong>Review</strong> tab, paste the URL into the search bar, and click <strong>Review PR</strong>.</p>
             <p><strong>3. View Findings:</strong> The AI will analyze every changed file and display a Quality Score alongside individual file cards detailing bugs, security issues, and performance improvements.</p>
             <p><strong>4. Post to GitHub:</strong> If you are logged in via GitHub, you can click <strong>Post Review to GitHub</strong> to automatically add the AI's feedback as a comment on the actual PR.</p>
