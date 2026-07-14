@@ -25,7 +25,7 @@ export default function Footer({ onPageChange, isCollapsed }) {
       </div>
 
       <div> 
-        © 2026 Niraj Jhapate
+        © 2026 <a href="https://nirajjhapate.in" target="_blank" rel="noopener noreferrer" className="hover:underline text-gray-700 dark:text-gray-300 transition-colors">Niraj Jhapate</a>
       </div> 
 
     </footer>
